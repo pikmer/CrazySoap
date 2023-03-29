@@ -60,7 +60,12 @@ public class UpgradeItem : MonoBehaviour
         var positionResetRange = Player.Instance.positionResetRange;
 		foreach (var item in this.items)
 		{
-            item.transform.position -= Vector3.forward * positionResetRange;
+            if(item.activeSelf){
+                item.transform.position -= Vector3.forward * positionResetRange;
+                if(item.transform.position.z <= -10f){
+                    item.SetActive(false);
+                }
+            }
         }
     }
 

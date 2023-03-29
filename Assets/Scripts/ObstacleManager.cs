@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ObstacleManager : MonoBehaviour
 {
@@ -14,6 +15,12 @@ public class ObstacleManager : MonoBehaviour
     int wave = 1;
     int waveTime = 0;
     int WaveTime = 20 * 60;
+
+    StageInfo stageInfo = new StageInfo();
+
+    //waveごとの確立
+    UnityEvent<float> waveEnemySpawn = new UnityEvent<float>();
+    protected Dictionary<int, UnityAction[]> waveEnemyProb;
 
 
     void Awake()
@@ -31,8 +38,11 @@ public class ObstacleManager : MonoBehaviour
                 obstacle.SetActive(true);
                 Obstacle sc = obstacle.GetComponent<Obstacle>();
                 this.obstacles[i][j] = sc;
+                sc.SetActive(false);
             }
         }
+
+        this.stageInfo.SetManager(this);
     }
 
     void FixedUpdate()
@@ -45,26 +55,20 @@ public class ObstacleManager : MonoBehaviour
             this.SetStage();
             this.waveTime = 0;
         }
+        if(this.waveTime % (this.WaveTime / 2) == 0){
+            Player.Instance.ChangesideStream();
+        }
     }
 
     void SetStage(){
         var playerPosZ = Player.Instance.transform.position.z;
-        for (int i = 0; i < this.obstacles[0].Length; i++)
-        {
-            var obstacle = this.obstacles[0][i];
-            var lange = i / 10;
-            obstacle.Init(new Vector3(Random.Range(-20f, 20f), 0, playerPosZ + 100 * (1 + lange)));
-        }
-        //強化アイテム
-        this.SetObstacle(new Vector3(0, 0, playerPosZ + 250f), 1);
-        UpgradeItem.Instance.SetItem(new Vector3(0, 0, playerPosZ + 250f));
-        this.SetObstacle(new Vector3(0, 0, playerPosZ + 550f), 1);
-        UpgradeItem.Instance.SetItem(new Vector3(0, 0, playerPosZ + 550f));
-        //コイン
-        for (int i = 0; i < 10; i++)
-        {
-            CoinParent.Instance.SetCoin(new Vector3(0, 0, playerPosZ + 300f + 10 * i));
-        }
+        
+        this.stageInfo.SetObstacle(StageName.Test1, playerPosZ);
+        this.stageInfo.SetObstacle(StageName.Test1, playerPosZ + 100);
+        this.stageInfo.SetObstacle(StageName.Test2, playerPosZ + 200);
+        this.stageInfo.SetObstacle(StageName.Test1, playerPosZ + 300);
+        this.stageInfo.SetObstacle(StageName.Test1, playerPosZ + 400);
+        this.stageInfo.SetObstacle(StageName.Test2, playerPosZ + 500);
     }
 
     public void SetObstacle(Vector3 position, int index){
@@ -83,13 +87,19 @@ public class ObstacleManager : MonoBehaviour
         {
             foreach (var obstacle in obstacleArray)
             {
-                obstacle.transform.position -= Vector3.forward * positionResetRange;
+                if(obstacle.isActive){
+                    obstacle.transform.position -= Vector3.forward * positionResetRange;
+                    if(obstacle.transform.position.z <= -10f){
+                        obstacle.SetActive(false);
+                    }
+                }
             }
         }
     }
 
     public void GameStart(){
         this.SetStage();
+        UpgradeItem.Instance.SetItem(new Vector3(0, 0, 50));
     }
 
     public void Retry(){

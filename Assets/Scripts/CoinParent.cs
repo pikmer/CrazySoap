@@ -59,7 +59,12 @@ public class CoinParent : MonoBehaviour
         var positionResetRange = Player.Instance.positionResetRange;
 		foreach (var coin in this.coins)
 		{
-            coin.transform.position -= Vector3.forward * positionResetRange;
+            if(coin.activeSelf){
+                coin.transform.position -= Vector3.forward * positionResetRange;
+                if(coin.transform.position.z <= -10f){
+                    coin.SetActive(false);
+                }
+            }
         }
     }
 

@@ -16,6 +16,11 @@ public class Player : MonoBehaviour
     //左右の壁の距離
     float wallDistance = 10f;
 
+    //横の探され
+    float sideStream = 0;
+    float minStream = 0.015f;
+    float maxStream = 0.03f;
+
     [HideInInspector][System.NonSerialized]
     public float positionResetRange = 100f;
 
@@ -54,6 +59,8 @@ public class Player : MonoBehaviour
         if(transform.position.z >= this.positionResetRange){
             GameManager.Instance.PositionReset();
         }
+        //横の流れ
+        this.moveDirection += Vector3.right * this.sideStream;
         //移動実行
         transform.position += this.moveDirection;
         this.moveDirection = Vector3.zero;
@@ -103,6 +110,11 @@ public class Player : MonoBehaviour
 
     //アップグレード
     public void WeaponUpgrade(){
+        //シングルショットを取ってないと、最優先でとる
+        if(this.weapons[0].level <= 0){
+            this.weapons[0].Upgrade();
+            return;
+        }
         this.itemProbs.Clear();
         float probSum = 0;
         //選べる武器と合計確立を出す
@@ -126,6 +138,14 @@ public class Player : MonoBehaviour
                 this.weapons[itemProb.weaponIndex].Upgrade();
                 break;
             }
+        }
+    }
+
+    public void ChangesideStream(){
+        if(Random.value < 0.5f){
+            this.sideStream = Random.Range(this.minStream, this.maxStream);
+        }else{
+            this.sideStream = Random.Range(-this.maxStream, -this.minStream);
         }
     }
 
