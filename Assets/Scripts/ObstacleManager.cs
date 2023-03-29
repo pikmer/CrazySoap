@@ -6,9 +6,10 @@ public class ObstacleManager : MonoBehaviour
 {
     public static ObstacleManager Instance;
 
-    public GameObject prefab;
     [HideInInspector][System.NonSerialized]
-    public Obstacle[] obstacles;
+    public Obstacle[][] obstacles;
+    public GameObject[] prefabs;
+    public int[] objLength;
 
     int wave = 1;
     int waveTime = 0;
@@ -19,15 +20,18 @@ public class ObstacleManager : MonoBehaviour
     {
         Instance = this;
 
-        //生成
-        this.obstacles = new Obstacle[60];
-        for (int i = 0; i < this.obstacles.Length; i++)
+        this.obstacles = new Obstacle[this.prefabs.Length][];
+        for (int i = 0; i < this.prefabs.Length; i++)
         {
-        	GameObject obstacle = Instantiate(prefab, Vector3.zero, Quaternion.identity);
-			obstacle.transform.SetParent(this.transform);
-            obstacle.SetActive(true);
-            Obstacle sc = obstacle.GetComponent<Obstacle>();
-            this.obstacles[i] = sc;
+            this.obstacles[i] = new Obstacle[this.objLength[i]];
+            for (int j = 0; j < this.objLength[i]; j++)
+            {
+                GameObject obstacle = Instantiate(this.prefabs[i], Vector3.zero, Quaternion.identity);
+                obstacle.transform.SetParent(this.transform);
+                obstacle.SetActive(true);
+                Obstacle sc = obstacle.GetComponent<Obstacle>();
+                this.obstacles[i][j] = sc;
+            }
         }
     }
 
@@ -38,35 +42,65 @@ public class ObstacleManager : MonoBehaviour
         this.waveTime++;
         if(this.waveTime >= this.WaveTime){
             this.wave++;
-            this.SetObstacle();
+            this.SetStage();
             this.waveTime = 0;
         }
     }
 
-    void SetObstacle(){
-        var plauerPos = Player.Instance.transform.position;
-        for (int i = 0; i < this.obstacles.Length; i++)
+    void SetStage(){
+        var playerPosZ = Player.Instance.transform.position.z;
+        for (int i = 0; i < this.obstacles[0].Length; i++)
         {
-            var obstacle = this.obstacles[i];
+            var obstacle = this.obstacles[0][i];
             var lange = i / 10;
-            obstacle.transform.position = new Vector3(Random.Range(-10f, 10f), 0,  60 * (1 + lange)) + plauerPos;
+            obstacle.Init(new Vector3(Random.Range(-20f, 20f), 0, playerPosZ + 100 * (1 + lange)));
+        }
+        //強化アイテム
+        this.SetObstacle(new Vector3(0, 0, playerPosZ + 250f), 1);
+        UpgradeItem.Instance.SetItem(new Vector3(0, 0, playerPosZ + 250f));
+        this.SetObstacle(new Vector3(0, 0, playerPosZ + 550f), 1);
+        UpgradeItem.Instance.SetItem(new Vector3(0, 0, playerPosZ + 550f));
+        //コイン
+        for (int i = 0; i < 10; i++)
+        {
+            CoinParent.Instance.SetCoin(new Vector3(0, 0, playerPosZ + 300f + 10 * i));
+        }
+    }
+
+    public void SetObstacle(Vector3 position, int index){
+        foreach (var obstacle in this.obstacles[index])
+        {
+            if(!obstacle.isActive){
+                obstacle.Init(position);
+                return;
+            }
         }
     }
 
     public void PositionReset(){
         var positionResetRange = Player.Instance.positionResetRange;
-        foreach (var obstacle in this.obstacles)
+        foreach (var obstacleArray in this.obstacles)
         {
-            obstacle.transform.position -= Vector3.forward * positionResetRange;
+            foreach (var obstacle in obstacleArray)
+            {
+                obstacle.transform.position -= Vector3.forward * positionResetRange;
+            }
         }
     }
 
     public void GameStart(){
-        this.SetObstacle();
+        this.SetStage();
     }
 
     public void Retry(){
         this.waveTime = 0;
         this.wave = 1;
+        foreach (var obstacleArray in this.obstacles)
+        {
+            foreach (var obstacle in obstacleArray)
+            {
+                if(obstacle.isActive) obstacle.SetActive(false);
+            }
+        }
     }
 }

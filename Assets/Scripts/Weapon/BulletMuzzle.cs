@@ -9,7 +9,7 @@ public class BulletMuzzle : MonoBehaviour
     public int bulletsLength = 20;
 
     public float speed = 0.3f; 
-    Vector3 buleltVelosity = new Vector3(0, 0, 0.3f);
+    Vector3 buleltVelosity = new Vector3(0, 0, 0.6f);
     int bulletTimer = 60;
 
     void Start()
@@ -51,25 +51,27 @@ public class BulletMuzzle : MonoBehaviour
                     bullet.isActive = false;
                 }
                 //攻撃確認
-                foreach (var obstacle in ObstacleManager.Instance.obstacles)
+                foreach (var obstacleArray in  ObstacleManager.Instance.obstacles)
                 {
-                    // if(enemy.isDead) continue;
-                    var isHit = false;
-                    foreach (var coll in obstacle.colliders)
+                    foreach (var obstacle in obstacleArray)
                     {
-                        var hitRange = coll.size / 2f;
-                        var range = obstacle.transform.position + coll.center - bullet.transform.position;
-                        if(Mathf.Abs(range.x) <= hitRange.x 
-                        && Mathf.Abs(range.y) <= hitRange.y
-                        && Mathf.Abs(range.z) <= hitRange.z){
-                            isHit = true;
-                            break;
+                        if(obstacle.isActive){
+                            var isHit = false;
+                            foreach (var coll in obstacle.colliders)
+                            {
+                                if(GameManager.CheckBoxColl(bullet.transform.position, Vector3.zero
+                                , obstacle.transform.position + coll.center, coll.size)){
+                                    isHit = true;
+                                    break;
+                                }
+                            }
+                            if(isHit){
+                                obstacle.Damage(1);
+                                bullet.obj.SetActive(false);
+                                bullet.isActive = false;
+                                break;
+                            }
                         }
-                    }
-                    if(isHit){
-                        bullet.obj.SetActive(false);
-                        bullet.isActive = false;
-                        break;
                     }
                 }
             }

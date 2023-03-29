@@ -10,24 +10,31 @@ public class Player : MonoBehaviour
 
     Vector3 moveDirection = Vector3.zero;
     [HideInInspector][System.NonSerialized]
-    public Vector3 forwardVelosity = new Vector3(0, 0, 0.3f);
-    Vector3 rightVelosity = new Vector3(0.15f, 0, 0);
+    public Vector3 forwardVelosity = new Vector3(0, 0, 0.5f);
+    Vector3 rightVelosity = new Vector3(0.25f, 0, 0);
+
+    //左右の壁の距離
+    float wallDistance = 10f;
 
     [HideInInspector][System.NonSerialized]
-    public float positionResetRange = 70f;
+    public float positionResetRange = 100f;
 
     //攻撃
     int attackInterval = 0;
     int AttackInterval = 8;
     public Weapon[] weapons;
 
-
     //判定
     public BoxCollider normalColl;
+
+    //アップグレード
+    public List<ItemProbability> itemProbs = new List<ItemProbability>();
     
     void Awake()
     {
         Instance = this;
+
+        this.wallDistance -= normalColl.size.x / 2f;
     }
 
     void FixedUpdate()
@@ -51,20 +58,35 @@ public class Player : MonoBehaviour
         transform.position += this.moveDirection;
         this.moveDirection = Vector3.zero;
 
+        //左右の移動上限
+        if(transform.position.x > this.wallDistance){
+            transform.position = new Vector3(this.wallDistance, transform.position.y, transform.position.z);
+        }else if(transform.position.x < -this.wallDistance){
+            transform.position = new Vector3(-this.wallDistance, transform.position.y, transform.position.z);
+        }
+
         //接触確認
-        foreach (var obstacle in ObstacleManager.Instance.obstacles)
+        var position = transform.position + this.normalColl.center;
+        var size = this.normalColl.size;
+        foreach (var obstacleArray in  ObstacleManager.Instance.obstacles)
         {
-            var isHit = false;
-            foreach (var coll in obstacle.colliders)
+            foreach (var obstacle in obstacleArray)
             {
-                if(this.CheckBoxColl(obstacle.transform.position, coll)){
-                    isHit = true;
-                    break;
+                if(obstacle.isActive){
+                    var isHit = false;
+                    foreach (var coll in obstacle.colliders)
+                    {
+                        if(GameManager.CheckBoxColl(position, size
+                        , obstacle.transform.position + coll.center, coll.size)){
+                            isHit = true;
+                            break;
+                        }
+                    }
+                    if(isHit){
+                        GameManager.Instance.GameOver();
+                        break;
+                    }
                 }
-            }
-            if(isHit){
-                GameManager.Instance.GameOver();
-                break;
             }
         }
 
@@ -79,24 +101,39 @@ public class Player : MonoBehaviour
         }
     }
 
+    //アップグレード
+    public void WeaponUpgrade(){
+        this.itemProbs.Clear();
+        float probSum = 0;
+        //選べる武器と合計確立を出す
+        for (int i = 0; i < this.weapons.Length; i++)
+        {
+            var weapon = this.weapons[i];
+            //武器上限なしまたは、上限レベルが下の場合に追加
+            if(weapon.level < weapon.maxLevel){
+                this.itemProbs.Add(new ItemProbability(i, weapon.baseProb));
+                probSum += weapon.baseProb;
+            }
+        }
+        //抽選
+        float selectProbability = UnityEngine.Random.Range(0, probSum);
+        float probAdd = 0;
+        for (int j = 0; j < this.itemProbs.Count; j++)
+        {
+            var itemProb = this.itemProbs[j];
+            probAdd += itemProb.prob;
+            if(probAdd >= selectProbability){
+                this.weapons[itemProb.weaponIndex].Upgrade();
+                break;
+            }
+        }
+    }
+
     public void PositionReset(){
         this.transform.position -= Vector3.forward * this.positionResetRange;
         foreach (var weapon in this.weapons)
         {
             weapon.PositionReset();
-        }
-    }
-
-    //回転してないボックス同士の判定
-    bool CheckBoxColl(Vector3 position, BoxCollider coll){
-        var hitRange = (this.normalColl.size + coll.size) / 2f;
-        var range = position + coll.center - this.transform.position - this.normalColl.center;
-        if(Mathf.Abs(range.x) <= hitRange.x 
-        && Mathf.Abs(range.y) <= hitRange.y
-        && Mathf.Abs(range.z) <= hitRange.z){
-            return true;
-        }else{
-            return false;
         }
     }
 
@@ -110,5 +147,20 @@ public class Player : MonoBehaviour
 
     public void Retry(){
         this.transform.position = Vector3.zero;
+        foreach (var weapon in this.weapons)
+        {
+            weapon.Retry();
+        }
+    }
+
+    //強化アイテムの確立用
+    public struct ItemProbability{
+        public int weaponIndex;
+        public float prob;
+
+        public ItemProbability(int weaponIndex, float prob) {
+            this.weaponIndex = weaponIndex;
+            this.prob = prob;
+        }
     }
 }
