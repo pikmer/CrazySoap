@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
 
     public void PositionReset(){
         Player.Instance.PositionReset();
+        BulletMuzzle.PositionReset();
         ObstacleManager.Instance.PositionReset();
         UpgradeItem.Instance.PositionReset();
         CoinParent.Instance.PositionReset();

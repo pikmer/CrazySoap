@@ -17,7 +17,7 @@ public class Obstacle : MonoBehaviour
 
     public virtual void Damage(int damage){}
 
-    public void SetActive(bool active){
+    public virtual void SetActive(bool active){
         this.isActive = active;
         this.graphics.SetActive(active);
     }

@@ -27,13 +27,10 @@ public class Player : MonoBehaviour
     //攻撃
     int attackInterval = 0;
     int AttackInterval = 8;
-    public Weapon[] weapons;
+    public Weapon weapon;
 
     //判定
     public BoxCollider normalColl;
-
-    //アップグレード
-    public List<ItemProbability> itemProbs = new List<ItemProbability>();
     
     void Awake()
     {
@@ -101,43 +98,18 @@ public class Player : MonoBehaviour
         this.attackInterval++;
         if(this.attackInterval >= this.AttackInterval){
             this.attackInterval = 0;
-            foreach (var weapon in this.weapons)
-            {
-                weapon.Shot();
-            }
+            this.weapon.Shot();
         }
     }
 
     //アップグレード
     public void WeaponUpgrade(){
         //シングルショットを取ってないと、最優先でとる
-        if(this.weapons[0].level <= 0){
-            this.weapons[0].Upgrade();
+        if(!this.weapon.isSingleShot){
+            this.weapon.SingleShotGet();
             return;
-        }
-        this.itemProbs.Clear();
-        float probSum = 0;
-        //選べる武器と合計確立を出す
-        for (int i = 0; i < this.weapons.Length; i++)
-        {
-            var weapon = this.weapons[i];
-            //武器上限なしまたは、上限レベルが下の場合に追加
-            if(weapon.level < weapon.maxLevel){
-                this.itemProbs.Add(new ItemProbability(i, weapon.baseProb));
-                probSum += weapon.baseProb;
-            }
-        }
-        //抽選
-        float selectProbability = UnityEngine.Random.Range(0, probSum);
-        float probAdd = 0;
-        for (int j = 0; j < this.itemProbs.Count; j++)
-        {
-            var itemProb = this.itemProbs[j];
-            probAdd += itemProb.prob;
-            if(probAdd >= selectProbability){
-                this.weapons[itemProb.weaponIndex].Upgrade();
-                break;
-            }
+        }else{
+            this.weapon.Upgrade();
         }
     }
 
@@ -151,10 +123,6 @@ public class Player : MonoBehaviour
 
     public void PositionReset(){
         this.transform.position -= Vector3.forward * this.positionResetRange;
-        foreach (var weapon in this.weapons)
-        {
-            weapon.PositionReset();
-        }
     }
 
     public void GameStart(){
@@ -167,20 +135,7 @@ public class Player : MonoBehaviour
 
     public void Retry(){
         this.transform.position = Vector3.zero;
-        foreach (var weapon in this.weapons)
-        {
-            weapon.Retry();
-        }
-    }
-
-    //強化アイテムの確立用
-    public struct ItemProbability{
-        public int weaponIndex;
-        public float prob;
-
-        public ItemProbability(int weaponIndex, float prob) {
-            this.weaponIndex = weaponIndex;
-            this.prob = prob;
-        }
+        this.sideStream = 0;
+        weapon.Retry();
     }
 }

@@ -6,7 +6,7 @@ public class CoinParent : MonoBehaviour
 {
     public static CoinParent Instance;
 
-    GameObject[] coins = new GameObject[10];
+    GameObject[] coins = new GameObject[50];
     public GameObject prefab;
 
     Vector3 collCenter = new Vector3(0, 0.25f, 0);

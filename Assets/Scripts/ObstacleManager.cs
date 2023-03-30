@@ -20,7 +20,8 @@ public class ObstacleManager : MonoBehaviour
 
     //waveごとの確立
     UnityEvent<float> waveEnemySpawn = new UnityEvent<float>();
-    protected Dictionary<int, UnityAction[]> waveEnemyProb;
+    // protected Dictionary<int, UnityAction<float>[]> stages;
+    public UnityAction<float>[] stages;
 
 
     void Awake()
@@ -62,13 +63,11 @@ public class ObstacleManager : MonoBehaviour
 
     void SetStage(){
         var playerPosZ = Player.Instance.transform.position.z;
-        
-        this.stageInfo.SetObstacle(StageName.Test1, playerPosZ);
-        this.stageInfo.SetObstacle(StageName.Test1, playerPosZ + 100);
-        this.stageInfo.SetObstacle(StageName.Test2, playerPosZ + 200);
-        this.stageInfo.SetObstacle(StageName.Test1, playerPosZ + 300);
-        this.stageInfo.SetObstacle(StageName.Test1, playerPosZ + 400);
-        this.stageInfo.SetObstacle(StageName.Test2, playerPosZ + 500);
+
+        for (int i = 0; i < 6; i++)
+        {
+            this.stages[Random.Range(0, this.stages.Length)](playerPosZ + 100 * i);
+        }
     }
 
     public void SetObstacle(Vector3 position, int index){
@@ -99,7 +98,7 @@ public class ObstacleManager : MonoBehaviour
 
     public void GameStart(){
         this.SetStage();
-        UpgradeItem.Instance.SetItem(new Vector3(0, 0, 50));
+        UpgradeItem.Instance.SetItem(new Vector3(0, 0, 5));
     }
 
     public void Retry(){

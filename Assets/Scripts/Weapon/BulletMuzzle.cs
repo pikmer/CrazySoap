@@ -12,6 +12,8 @@ public class BulletMuzzle : MonoBehaviour
     Vector3 buleltVelosity = new Vector3(0, 0, 0.6f);
     int bulletTimer = 60;
 
+    static List<BulletMuzzle> muzzles = new List<BulletMuzzle>();
+
     void Start()
     {
         this.bullets = new Bullet[this.bulletsLength];
@@ -21,6 +23,8 @@ public class BulletMuzzle : MonoBehaviour
         	bullet.SetActive(false);
         }
         this.buleltVelosity = (this.transform.rotation * Vector3.forward * this.speed) + Player.Instance.forwardVelosity;
+
+        muzzles.Add(this);
     }
 
     public void Shot(){
@@ -30,7 +34,7 @@ public class BulletMuzzle : MonoBehaviour
             if(!bullet.isActive){
                 bullet.obj.SetActive(true);
                 bullet.isActive = true;
-                bullet.transform.position = this.transform.position;
+                bullet.transform.position = this.transform.position + this.transform.right * Random.Range(-0.1f, 0.1f);
                 bullet.transform.rotation = this.transform.rotation;
                 bullet.velocity = this.buleltVelosity;
                 bullet.timer = this.bulletTimer;
@@ -77,12 +81,15 @@ public class BulletMuzzle : MonoBehaviour
             }
         }
     }
-
-    public void PositionReset(){
+    
+    public static void PositionReset(){
         var positionResetRange = Player.Instance.positionResetRange;
-        foreach (var bullet in this.bullets)
+        foreach (var muzzle in muzzles)
         {
-            bullet.transform.position -= Vector3.forward * positionResetRange;
+            foreach (var bullet in muzzle.bullets)
+            {
+                bullet.transform.position -= Vector3.forward * positionResetRange;
+            }
         }
     }
 }
