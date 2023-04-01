@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
         BulletMuzzle.PositionReset();
         ObstacleManager.Instance.PositionReset();
         UpgradeItem.Instance.PositionReset();
+        SupportItem.Instance.PositionReset();
         CoinParent.Instance.PositionReset();
     }
 
@@ -49,6 +50,7 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.Retry();
         ObstacleManager.Instance.Retry();
         UpgradeItem.Instance.Retry();
+        SupportItem.Instance.Retry();
         CoinParent.Instance.Retry();
     }
 

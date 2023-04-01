@@ -31,16 +31,20 @@ public class StageInfo
     {
         for (int i = 0; i < 5; i++)
         {
-            manager.SetObstacle(new Vector3(-8 + 4 * i, 0, offsetZ + 100f), 0);
+            manager.SetObstacle(new Vector3(-8 + 4 * i, 0, offsetZ + 90f), 0);
         }
         // for (int i = 0; i < 4; i++)
         // {
         //     manager.SetObstacle(new Vector3(-6 + 4 * i, 0, offsetZ + 70f), 0);
         // }
         //強化アイテム
-        var upgradePos = new Vector3(-6 + 4 * Random.Range(0, 4), 0, offsetZ + 100f);
+        var upgradePos = new Vector3(-6 + 4 * Random.Range(0, 4), 0, offsetZ + 90f);
         manager.SetObstacle(upgradePos, 1);
-        UpgradeItem.Instance.SetItem(upgradePos);
+        if(Random.value < 0.5f){
+            UpgradeItem.Instance.SetItem(upgradePos);
+        }else{
+            SupportItem.Instance.SetItemRandom(upgradePos);
+        }
 
         //コイン
         for (int i = 0; i < 10; i++)
@@ -105,16 +109,20 @@ public class StageInfo
     public void Wall(float offsetZ){
         for (int i = 0; i < 5; i++)
         {
-            manager.SetObstacle(new Vector3(-8 + 4 * i, 0, offsetZ + 100f), 0);
+            manager.SetObstacle(new Vector3(-8 + 4 * i, 0, offsetZ + 90f), 0);
         }
         //強化アイテム
         var upgradeX = Random.Range(0, 4);
         for (int i = 0; i < 4; i++)
         {
-            var pos = new Vector3(-6 + 4 * i, 0, offsetZ + 100f);
+            var pos = new Vector3(-6 + 4 * i, 0, offsetZ + 90f);
             if(upgradeX == i){
                 manager.SetObstacle(pos, 1);
-                UpgradeItem.Instance.SetItem(pos);
+                if(Random.value < 0.5f){
+                    UpgradeItem.Instance.SetItem(pos);
+                }else{
+                    SupportItem.Instance.SetItemRandom(pos);
+                }
             }else{
                 manager.SetObstacle(pos, 0);
             }

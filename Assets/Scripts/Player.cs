@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
     public static Player Instance;
 
     bool isDead = true;
+	//無敵モード
+	bool isInvincible = true;
 
     Vector3 moveDirection = Vector3.zero;
     [HideInInspector][System.NonSerialized]
@@ -28,15 +31,41 @@ public class Player : MonoBehaviour
     int attackInterval = 0;
     int AttackInterval = 8;
     public Weapon weapon;
+    //ウィングマン
+    bool isWingman;
+    public GameObject wingmanObj;
+    public BulletMuzzle[] wingmans;
 
     //判定
     public BoxCollider normalColl;
+    //バリア
+    bool isShield = false;
+    public GameObject shieldObj;
+    int shieldInterval;
+    int ShieldInterval = 20 * 60;
+    int shieldCount;
+    int ShieldCount = 15 * 60;
+    public Counter shieldCounter;
+
+    //スコア
+    int posResetMil;
+    int itemScore;
+    int score;
+    public Text scoreText;
     
     void Awake()
     {
         Instance = this;
 
         this.wallDistance -= normalColl.size.x / 2f;
+    }
+
+    void Update(){
+        if(Input.GetKeyDown(KeyCode.Space) && this.shieldCount <= 0 && this.shieldInterval <= 0){
+            this.isShield = true;
+            this.shieldCount = this.ShieldCount;
+            this.shieldObj.SetActive(true);
+        }
     }
 
     void FixedUpdate()
@@ -87,18 +116,52 @@ public class Player : MonoBehaviour
                         }
                     }
                     if(isHit){
-                        GameManager.Instance.GameOver();
+                        if(this.isShield){
+                            obstacle.SetActive(false);
+                            this.isShield = false;
+                            this.shieldObj.SetActive(false);
+                            this.shieldCount = 0;
+                            this.shieldInterval = this.ShieldInterval;
+                        }else{
+                            if(!this.isInvincible) GameManager.Instance.GameOver();
+                        }
                         break;
                     }
                 }
             }
         }
 
+        //スコア表示更新
+        this.scoreText.text = this.GetScore().ToString();
+
         //攻撃実行
         this.attackInterval++;
         if(this.attackInterval >= this.AttackInterval){
             this.attackInterval = 0;
             this.weapon.Shot();
+            //
+            if(this.isWingman){
+                foreach (var wingman in wingmans)
+                {
+                    wingman.Shot();
+                }
+            }
+        }
+
+        //シールド
+        if(this.shieldCount > 0){
+            this.shieldCount--;
+            Counter.Display((float)this.shieldCount / (float)this.ShieldCount);
+            if(this.shieldCount <= 0){
+                this.isShield = false;
+                this.shieldObj.SetActive(false);
+                this.shieldInterval = this.ShieldInterval;
+            }
+        }
+        if(this.shieldInterval > 0){
+            this.shieldInterval--;
+            if(this.shieldInterval <= 0){
+            }
         }
     }
 
@@ -121,12 +184,28 @@ public class Player : MonoBehaviour
         }
     }
 
+    //スコア計算
+    int GetScore(){
+        return (this.posResetMil + (int)transform.position.z) + this.itemScore;
+    }
+    public void ItemScore(int score){
+        this.itemScore += score;
+    }
+
+    //ウィングマン
+    public void Wingman(bool isWingman){
+        this.isWingman = isWingman;
+        this.wingmanObj.SetActive(isWingman);
+    }
+
     public void PositionReset(){
         this.transform.position -= Vector3.forward * this.positionResetRange;
+        this.posResetMil += (int)this.positionResetRange;
     }
 
     public void GameStart(){
         this.isDead = false;
+        this.scoreText.text = "";
     }
 
     public void GameOver(){
@@ -137,5 +216,15 @@ public class Player : MonoBehaviour
         this.transform.position = Vector3.zero;
         this.sideStream = 0;
         weapon.Retry();
+        this.isWingman = false;
+        //
+        this.isShield = false;
+        this.shieldCount = 0;
+        this.shieldInterval = 0;
+        this.shieldObj.SetActive(false);
+        //スコア関係
+        this.posResetMil = 0;
+        this.itemScore = 0;
+        this.score = 0;
     }
 }
