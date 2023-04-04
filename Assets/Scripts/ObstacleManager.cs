@@ -12,6 +12,7 @@ public class ObstacleManager : MonoBehaviour
     public GameObject[] prefabs;
     public int[] objLength;
 
+    int innerWave = 0;
     int wave = 1;
     int waveTime = 0;
     int WaveTime = 20 * 60;
@@ -20,8 +21,8 @@ public class ObstacleManager : MonoBehaviour
 
     //waveごとの確立
     UnityEvent<float> waveEnemySpawn = new UnityEvent<float>();
-    // protected Dictionary<int, UnityAction<float>[]> stages;
-    public UnityAction<float>[] stages;
+    public Dictionary<int, UnityAction<float>[]> stages;
+    public UnityAction<float>[] nowStages;
 
 
     void Awake()
@@ -53,28 +54,38 @@ public class ObstacleManager : MonoBehaviour
         this.waveTime++;
         if(this.waveTime >= this.WaveTime){
             this.wave++;
-            this.SetStage();
             this.waveTime = 0;
         }
         if(this.waveTime % (this.WaveTime / 2) == 0){
             Player.Instance.ChangesideStream();
         }
-    }
-
-    void SetStage(){
-        var playerPosZ = Player.Instance.transform.position.z;
-
-        for (int i = 0; i < 6; i++)
-        {
-            this.stages[Random.Range(0, this.stages.Length)](playerPosZ + 100 * i);
+        if(this.waveTime % (this.WaveTime / 6) == 0){
+            this.SetStage(5);
         }
     }
 
-    public void SetObstacle(Vector3 position, int index){
+    void SetStage(float z){
+        var playerPosZ = Player.Instance.transform.position.z;
+        this.innerWave++;
+        
+        //抽選対象の切り替え
+        if(this.stages.ContainsKey(this.innerWave)){
+            this.nowStages = this.stages[this.innerWave];
+        }
+
+        this.nowStages[Random.Range(0, this.nowStages.Length)](playerPosZ + 100 * z);
+
+    }
+
+    public void SetObstacle(Vector3 position, int index, Coin coin = null){
         foreach (var obstacle in this.obstacles[index])
         {
             if(!obstacle.isActive){
                 obstacle.Init(position);
+                if(coin != null){
+                    obstacle.Protect(coin);
+                    coin.Protect();
+                }
                 return;
             }
         }
@@ -97,13 +108,17 @@ public class ObstacleManager : MonoBehaviour
     }
 
     public void GameStart(){
-        this.SetStage();
+        for (int i = 0; i < 6; i++)
+        {
+            this.SetStage(i);
+        }
         UpgradeItem.Instance.SetItem(new Vector3(0, 0, 5));
     }
 
     public void Retry(){
         this.waveTime = 0;
         this.wave = 1;
+        this.innerWave = 0;
         foreach (var obstacleArray in this.obstacles)
         {
             foreach (var obstacle in obstacleArray)

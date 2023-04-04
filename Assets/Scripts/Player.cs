@@ -9,12 +9,18 @@ public class Player : MonoBehaviour
 
     bool isDead = true;
 	//無敵モード
-	bool isInvincible = true;
+	bool isInvincible = false;
 
     Vector3 moveDirection = Vector3.zero;
     [HideInInspector][System.NonSerialized]
     public Vector3 forwardVelosity = new Vector3(0, 0, 0.5f);
     Vector3 rightVelosity = new Vector3(0.25f, 0, 0);
+
+    //ジャンプ
+    bool isJump = false;
+    float jumpSpeed;
+    float JumpSpeed = 0.5f;
+    float gravity = 0.005f;
 
     //左右の壁の距離
     float wallDistance = 10f;
@@ -66,6 +72,10 @@ public class Player : MonoBehaviour
             this.shieldCount = this.ShieldCount;
             this.shieldObj.SetActive(true);
         }
+        //ジャンプ仮
+        // if(Input.GetKeyDown(KeyCode.W)){
+        //     this.Jump();
+        // }
     }
 
     void FixedUpdate()
@@ -85,8 +95,16 @@ public class Player : MonoBehaviour
         if(transform.position.z >= this.positionResetRange){
             GameManager.Instance.PositionReset();
         }
+        //ジャンプ
+        if(this.isJump){
+            this.moveDirection += Vector3.up * this.jumpSpeed;
+            this.jumpSpeed -= this.gravity;
+        }
         //横の流れ
-        this.moveDirection += Vector3.right * this.sideStream;
+        else{
+            this.moveDirection += Vector3.right * this.sideStream;
+        }
+        
         //移動実行
         transform.position += this.moveDirection;
         this.moveDirection = Vector3.zero;
@@ -96,6 +114,11 @@ public class Player : MonoBehaviour
             transform.position = new Vector3(this.wallDistance, transform.position.y, transform.position.z);
         }else if(transform.position.x < -this.wallDistance){
             transform.position = new Vector3(-this.wallDistance, transform.position.y, transform.position.z);
+        }
+        //ジャンプの着地
+        if(this.isJump && transform.position.y <= 0){
+            this.isJump = false;
+            transform.position = new Vector3(transform.position.x, 0, transform.position.z);
         }
 
         //接触確認
@@ -136,7 +159,7 @@ public class Player : MonoBehaviour
 
         //攻撃実行
         this.attackInterval++;
-        if(this.attackInterval >= this.AttackInterval){
+        if(!this.isJump && this.attackInterval >= this.AttackInterval){
             this.attackInterval = 0;
             this.weapon.Shot();
             //
@@ -174,6 +197,11 @@ public class Player : MonoBehaviour
         }else{
             this.weapon.Upgrade();
         }
+    }
+
+    public void Jump(){
+        this.isJump = true;
+        this.jumpSpeed = this.JumpSpeed;
     }
 
     public void ChangesideStream(){
@@ -217,6 +245,10 @@ public class Player : MonoBehaviour
         this.sideStream = 0;
         weapon.Retry();
         this.isWingman = false;
+        this.wingmanObj.SetActive(false);
+        //
+        this.isJump = false;
+        this.jumpSpeed = 0;
         //
         this.isShield = false;
         this.shieldCount = 0;

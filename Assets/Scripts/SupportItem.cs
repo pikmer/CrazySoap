@@ -98,6 +98,9 @@ public class SupportItem : MonoBehaviour
                 this.wingmanInterval = this.WingmanInterval;
                 Player.Instance.Wingman(true);
                 break;
+            case 3:
+                Player.Instance.Jump();
+                break;
         }
     }
 

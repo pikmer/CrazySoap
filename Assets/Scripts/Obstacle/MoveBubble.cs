@@ -5,8 +5,10 @@ using UnityEngine;
 public class MoveBubble : Bubble
 {
     Vector3 velocity;
-    float moveSpeedMax = 0.12f;
-    float moveSpeedMin = 0.04f;
+    public float moveSpeedMax = 0.12f;
+    public float moveSpeedMin = 0.04f;
+
+    public bool isLoop;
 
     public override void Init(Vector3 position){
         base.Init(position);
@@ -15,9 +17,15 @@ public class MoveBubble : Bubble
 
     void FixedUpdate()
     {
+        if(!this.isActive) return;
+        
         this.transform.position += this.velocity;
         if(this.transform.position.x <= -10f){
-            this.transform.position += Vector3.right * 20f;
+            if(this.isLoop){
+                this.transform.position += Vector3.right * 20f;
+            }else{
+                this.SetActive(false);
+            }
         }
     }
 }

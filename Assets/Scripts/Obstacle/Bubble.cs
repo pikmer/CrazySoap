@@ -2,42 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bubble : Obstacle
+public class Bubble : HealthObstacle
 {
-    public int MaxHP = 10;
-    int HP;
-
-    public bool isHPbar = true;
-    public GameObject HPbarObj;
-    Transform HPbarTrf;
-    public Transform HPbar;
-    public Transform HPbarBack;
-
-    void Start(){
-        this.HPbarTrf = this.HPbarObj.transform;
-        if(!this.isHPbar){
-            this.HPbarObj.SetActive(false);
-        }
-    }
-
-    public override void Init(Vector3 position){
-        base.Init(position);
-        if(this.isHPbar){
-            this.HP = this.MaxHP;
-            var size = this.HPbar.localScale;
-            this.HPbar.localScale = new Vector3(1f, size.y, size.z);
-            this.HPbarBack.localScale = new Vector3(0, size.y, size.z);
-        }
-    }
-
-    // void Update(){
-    //     this.HPbarTrf.rotation = Quaternion.FromToRotation(Vector3.back, Camera.main.transform.position - this.HPbarTrf.position);
-    // }
+    Coin coin;
 
     public override void Damage(int damage){
         this.HP -= damage;
         if(this.HP <= 0){
             this.SetActive(false);
+            if(this.coin != null){
+                this.coin.ProtectBreak();
+            }
         }else if(this.isHPbar){
             var size = this.HPbar.localScale;
             this.HPbar.localScale = new Vector3((float)this.HP / (float)this.MaxHP, size.y, size.z);
@@ -45,10 +20,7 @@ public class Bubble : Obstacle
         }
     }
 
-    public override void SetActive(bool active){
-        base.SetActive(active);
-        if(this.isHPbar){
-            this.HPbarObj.SetActive(active);
-        }
+    public override void Protect(Coin coin){
+        this.coin = coin;
     }
 }

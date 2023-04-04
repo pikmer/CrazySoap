@@ -21,4 +21,6 @@ public class Obstacle : MonoBehaviour
         this.isActive = active;
         this.graphics.SetActive(active);
     }
+
+    public virtual void Protect(Coin coin){}
 }

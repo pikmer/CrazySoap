@@ -9,9 +9,14 @@ public class StageInfo
 
     public void SetManager(ObstacleManager manager){
         this.manager = manager;
-        manager.stages = new UnityAction<float>[]{
-            Test1, Test2, CenterBlock, RightLeft, Branch, Wall, Center,
-            Bubble, MoveBubble,
+        manager.stages = new Dictionary<int, UnityAction<float>[]>(){
+            {1, new UnityAction<float>[]{Test1,}},
+            {2, new UnityAction<float>[]{Test2,}},
+            {3, new UnityAction<float>[]{
+                Test1, Test2, CenterBlock, RightLeft, Branch, Wall, Center,
+                Bubble, MoveBubble, MoveObstacle, BubbleSpawner,
+                // BubbleSpawner
+            }},
         };
     }
 
@@ -146,9 +151,12 @@ public class StageInfo
     public void Bubble(float offsetZ){
         for (int i = 3; i < 8; i++)
         {
-            manager.SetObstacle(new Vector3(0, 0, offsetZ + 10 * (1 + i)), 3);
-            manager.SetObstacle(new Vector3(3, 0, offsetZ + 10 * (1 + i)), 3);
-            manager.SetObstacle(new Vector3(-3, 0, offsetZ + 10 * (1 + i)), 3);
+            for (int j = 0; j < 3; j++)
+            {
+                var pos = new Vector3(-3 + 3 * j, 0, offsetZ + 10 * (1 + i));
+                var coin = CoinParent.Instance.SetCoinReturn(pos);
+                manager.SetObstacle(pos, 3, coin);
+            }
         }
     }
 
@@ -157,5 +165,23 @@ public class StageInfo
         {
             manager.SetObstacle(new Vector3(10, 0, offsetZ + 5 * (1 + i)), 4);
         }
+    }
+
+    public void MoveObstacle(float offsetZ){
+        manager.SetObstacle(new Vector3(Random.Range(-5f, 5f), 0, offsetZ + 80), 7);
+        
+        manager.SetObstacle(new Vector3(0, 0, offsetZ + 90), 5);
+        manager.SetObstacle(new Vector3(0, 0, offsetZ + 90), 6);
+        manager.SetObstacle(new Vector3(-10, 0, offsetZ + 90), 5);
+        manager.SetObstacle(new Vector3(10, 0, offsetZ + 90), 6);
+
+        manager.SetObstacle(new Vector3(5, 0, offsetZ + 100), 5);
+        manager.SetObstacle(new Vector3(5, 0, offsetZ + 100), 6);
+        manager.SetObstacle(new Vector3(-5, 0, offsetZ + 100), 5);
+        manager.SetObstacle(new Vector3(-5, 0, offsetZ + 100), 6);
+    }
+
+    public void BubbleSpawner(float offsetZ){
+        manager.SetObstacle(new Vector3(9, 0, offsetZ + 90), 8);
     }
 }

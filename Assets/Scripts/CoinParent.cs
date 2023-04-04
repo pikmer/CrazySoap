@@ -6,7 +6,7 @@ public class CoinParent : MonoBehaviour
 {
     public static CoinParent Instance;
 
-    Coin[] coins = new Coin[50];
+    Coin[] coins = new Coin[100];
     public GameObject prefab;
 
     Vector3 collCenter = new Vector3(0, 0.25f, 0);
@@ -40,7 +40,7 @@ public class CoinParent : MonoBehaviour
         {
             if(coin.isActive){
                 //マグネット吸引
-                if(this.isMagnet && !coin.isMagnet){
+                if(this.isMagnet && !coin.isMagnet && !coin.isProtected){
                     float distanceSqr = (playerPosition - coin.trf.position).sqrMagnitude;
                     if(distanceSqr <= this.magDistance * this.magDistance){
                         coin.isMagnet = true;
@@ -90,9 +90,25 @@ public class CoinParent : MonoBehaviour
                 coin.obj.SetActive(true);
                 coin.trf.position = position;
                 coin.isMagnet = false;
+                coin.isProtected = false;
                 break;
             }
         }
+    }
+    public Coin SetCoinReturn(Vector3 position)
+    {
+		foreach (var coin in this.coins)
+		{
+            if(!coin.isActive){
+                coin.isActive = true;
+                coin.obj.SetActive(true);
+                coin.trf.position = position;
+                coin.isMagnet = false;
+                coin.isProtected = false;
+                return coin;;
+            }
+        }
+        return null;
     }
 
     public void Magnet(bool isMagnet){
@@ -128,17 +144,27 @@ public class CoinParent : MonoBehaviour
         this.isMagnet = false;
         this.isDoubleGet = false;
     }
+}
 
-    class Coin{
-        public bool isActive;
-        public GameObject obj;
-        public Transform trf;
-        public float speed;
-        public bool isMagnet;
+public class Coin{
+    public bool isActive;
+    public GameObject obj;
+    public Transform trf;
+    public float speed;
+    public bool isMagnet;
+    public bool isProtected;
 
-        public Coin(GameObject obj){
-            this.obj = obj;
-            this.trf = obj.transform;
-        }
+    public Coin(GameObject obj){
+        this.obj = obj;
+        this.trf = obj.transform;
+    }
+
+    public void Protect(){
+        this.isProtected = true;
+    }
+
+    public void ProtectBreak(){
+        this.isProtected = false;
+        this.isMagnet = true;
     }
 }

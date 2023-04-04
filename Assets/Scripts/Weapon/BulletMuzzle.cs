@@ -14,6 +14,8 @@ public class BulletMuzzle : MonoBehaviour
 
     static List<BulletMuzzle> muzzles = new List<BulletMuzzle>();
 
+    Vector3 bulletSize = Vector3.one * 0.2f;
+
     void Start()
     {
         this.bullets = new Bullet[this.bulletsLength];
@@ -63,7 +65,7 @@ public class BulletMuzzle : MonoBehaviour
                             var isHit = false;
                             foreach (var coll in obstacle.colliders)
                             {
-                                if(GameManager.CheckBoxColl(bullet.transform.position, Vector3.zero
+                                if(GameManager.CheckBoxColl(bullet.transform.position, this.bulletSize
                                 , obstacle.transform.position + coll.center, coll.size)){
                                     isHit = true;
                                     break;
