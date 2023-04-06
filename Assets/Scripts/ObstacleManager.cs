@@ -73,8 +73,14 @@ public class ObstacleManager : MonoBehaviour
             this.nowStages = this.stages[this.innerWave];
         }
 
-        this.nowStages[Random.Range(0, this.nowStages.Length)](playerPosZ + 100 * z);
-
+        //3の倍数は強化ポイント
+        if(this.innerWave % 6 == 0){
+            this.stageInfo.Upgrade(playerPosZ + 100 * z);
+        }
+        //ランダムセット
+        else{
+            this.nowStages[Random.Range(0, this.nowStages.Length)](playerPosZ + 100 * z);
+        }
     }
 
     public void SetObstacle(Vector3 position, int index, Coin coin = null){

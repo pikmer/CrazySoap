@@ -10,17 +10,23 @@ public class StageInfo
     public void SetManager(ObstacleManager manager){
         this.manager = manager;
         manager.stages = new Dictionary<int, UnityAction<float>[]>(){
-            {1, new UnityAction<float>[]{Test1,}},
-            {2, new UnityAction<float>[]{Test2,}},
-            {3, new UnityAction<float>[]{
-                Test1, Test2, CenterBlock, RightLeft, Branch, Wall, Center,
+            {1, new UnityAction<float>[]{Mutual,}},
+            {2, new UnityAction<float>[]{RightLeft,}},
+            {3, new UnityAction<float>[]{Branch, Center, CenterBlock}},
+            {4, new UnityAction<float>[]{
+                Mutual, CenterBlock, RightLeft, Branch, Wall, Center,
+                Bubble, MoveBubble,
+                // BubbleSpawner
+            }},
+            {12, new UnityAction<float>[]{
+                Mutual, CenterBlock, RightLeft, Branch, Wall, Center,
                 Bubble, MoveBubble, MoveObstacle, BubbleSpawner,
                 // BubbleSpawner
             }},
         };
     }
 
-    void Test1(float offsetZ)
+    void Mutual(float offsetZ)
     {
         for (int i = 0; i < 5; i++)
         {
@@ -32,7 +38,7 @@ public class StageInfo
         }
     }
 
-    void Test2(float offsetZ)
+    public void Upgrade(float offsetZ)
     {
         for (int i = 0; i < 5; i++)
         {

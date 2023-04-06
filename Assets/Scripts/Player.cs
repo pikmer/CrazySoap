@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     bool isJump = false;
     float jumpSpeed;
     float JumpSpeed = 0.5f;
-    float gravity = 0.005f;
+    float gravity = 0.004f;
 
     //左右の壁の距離
     float wallDistance = 10f;
