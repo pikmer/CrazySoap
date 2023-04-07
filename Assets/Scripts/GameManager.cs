@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
         UpgradeItem.Instance.PositionReset();
         SupportItem.Instance.PositionReset();
         CoinParent.Instance.PositionReset();
+        Fog.Instance.PositionReset();
     }
 
     public void GameStart(){
@@ -52,6 +53,7 @@ public class GameManager : MonoBehaviour
         UpgradeItem.Instance.Retry();
         SupportItem.Instance.Retry();
         CoinParent.Instance.Retry();
+        Fog.Instance.Retry();
     }
 
     //回転してないボックス同士の判定

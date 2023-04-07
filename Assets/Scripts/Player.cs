@@ -73,9 +73,9 @@ public class Player : MonoBehaviour
             this.shieldObj.SetActive(true);
         }
         //ジャンプ仮
-        // if(Input.GetKeyDown(KeyCode.W)){
-        //     this.Jump();
-        // }
+        if(Input.GetKeyDown(KeyCode.W)){
+            this.Jump();
+        }
     }
 
     void FixedUpdate()

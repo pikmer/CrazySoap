@@ -70,6 +70,7 @@ public class CoinParent : MonoBehaviour
                     coin.isActive = false;
                     break;
                 }
+                coin.trf.Rotate(0, 3f, 0);
             }
         }
     }
@@ -88,7 +89,9 @@ public class CoinParent : MonoBehaviour
             if(!coin.isActive){
                 coin.isActive = true;
                 coin.obj.SetActive(true);
+                coin.blur.SetActive(true);
                 coin.trf.position = position;
+                coin.trf.rotation = Quaternion.identity;
                 coin.isMagnet = false;
                 coin.isProtected = false;
                 break;
@@ -102,6 +105,7 @@ public class CoinParent : MonoBehaviour
             if(!coin.isActive){
                 coin.isActive = true;
                 coin.obj.SetActive(true);
+                coin.blur.SetActive(true);
                 coin.trf.position = position;
                 coin.isMagnet = false;
                 coin.isProtected = false;
@@ -150,6 +154,7 @@ public class Coin{
     public bool isActive;
     public GameObject obj;
     public Transform trf;
+    public GameObject blur;
     public float speed;
     public bool isMagnet;
     public bool isProtected;
@@ -157,14 +162,17 @@ public class Coin{
     public Coin(GameObject obj){
         this.obj = obj;
         this.trf = obj.transform;
+        this.blur = this.trf.GetChild(1).gameObject;
     }
 
     public void Protect(){
         this.isProtected = true;
+        this.blur.SetActive(false);
     }
 
     public void ProtectBreak(){
         this.isProtected = false;
         this.isMagnet = true;
+        this.blur.SetActive(true);
     }
 }
