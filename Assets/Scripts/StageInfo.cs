@@ -88,7 +88,7 @@ public class StageInfo
             manager.SetObstacle(new Vector3(0, 0, offsetZ + 10 * (1 + i)), 0);
             manager.SetObstacle(new Vector3(-3, 0, offsetZ + 10 * (1 + i)), 0);
             manager.SetObstacle(new Vector3(-6, 0, offsetZ + 10 * (1 + i)), 0);
-            CoinParent.Instance.SetCoin(new Vector3(5, 0, offsetZ + 10 * (1 + i)));
+            CoinParent.Instance.SetCoin(new Vector3(8, 0, offsetZ + 10 * (1 + i)));
         }
         for (int i = 6; i < 10; i++)
         {
