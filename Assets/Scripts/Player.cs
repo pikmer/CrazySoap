@@ -25,13 +25,20 @@ public class Player : MonoBehaviour
     //左右の壁の距離
     float wallDistance = 10f;
 
-    //横の探され
+    //横の水流
     float sideStream = 0;
     float minStream = 0.015f;
     float maxStream = 0.03f;
 
     [HideInInspector][System.NonSerialized]
     public float positionResetRange = 100f;
+
+    //吹っ飛ぶ演出
+    public Transform graphicsTrf;
+    int flyCount = 0;
+    int FlyCount = 30;
+    Vector3 flyVec;
+    Vector3 rotateAxis;
 
     //攻撃
     int attackInterval = 0;
@@ -80,110 +87,124 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(this.isDead) return;
+        if(this.isDead){
+            if(this.flyCount > 0){
+                this.flyCount--;
+                this.graphicsTrf.position += this.flyVec;
+                this.graphicsTrf.Rotate(this.rotateAxis, 20f, Space.World);
+            }
+        }else{
+            var transform = this.transform;
 
-        var transform = this.transform;
+            //移動
+            this.moveDirection += this.forwardVelosity;
+            if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)){
+                this.moveDirection -= this.rightVelosity;
+            }
+            if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)){
+                this.moveDirection += this.rightVelosity;
+            }
+            if(transform.position.z >= this.positionResetRange){
+                GameManager.Instance.PositionReset();
+            }
+            //ジャンプ
+            if(this.isJump){
+                this.moveDirection += Vector3.up * this.jumpSpeed;
+                this.jumpSpeed -= this.gravity;
+            }
+            //横の流れ
+            else{
+                this.moveDirection += Vector3.right * this.sideStream;
+            }
+            
+            //移動実行
+            transform.position += this.moveDirection;
 
-        //移動
-        this.moveDirection += this.forwardVelosity;
-        if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)){
-            this.moveDirection -= this.rightVelosity;
-        }
-        if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)){
-            this.moveDirection += this.rightVelosity;
-        }
-        if(transform.position.z >= this.positionResetRange){
-            GameManager.Instance.PositionReset();
-        }
-        //ジャンプ
-        if(this.isJump){
-            this.moveDirection += Vector3.up * this.jumpSpeed;
-            this.jumpSpeed -= this.gravity;
-        }
-        //横の流れ
-        else{
-            this.moveDirection += Vector3.right * this.sideStream;
-        }
-        
-        //移動実行
-        transform.position += this.moveDirection;
-        this.moveDirection = Vector3.zero;
+            //左右の移動上限
+            if(transform.position.x > this.wallDistance){
+                transform.position = new Vector3(this.wallDistance, transform.position.y, transform.position.z);
+            }else if(transform.position.x < -this.wallDistance){
+                transform.position = new Vector3(-this.wallDistance, transform.position.y, transform.position.z);
+            }
+            //ジャンプの着地
+            if(this.isJump && transform.position.y <= 0){
+                this.isJump = false;
+                transform.position = new Vector3(transform.position.x, 0, transform.position.z);
+            }
 
-        //左右の移動上限
-        if(transform.position.x > this.wallDistance){
-            transform.position = new Vector3(this.wallDistance, transform.position.y, transform.position.z);
-        }else if(transform.position.x < -this.wallDistance){
-            transform.position = new Vector3(-this.wallDistance, transform.position.y, transform.position.z);
-        }
-        //ジャンプの着地
-        if(this.isJump && transform.position.y <= 0){
-            this.isJump = false;
-            transform.position = new Vector3(transform.position.x, 0, transform.position.z);
-        }
-
-        //接触確認
-        var position = transform.position + this.normalColl.center;
-        var size = this.normalColl.size;
-        foreach (var obstacleArray in  ObstacleManager.Instance.obstacles)
-        {
-            foreach (var obstacle in obstacleArray)
+            //接触確認
+            var position = transform.position + this.normalColl.center;
+            var size = this.normalColl.size;
+            foreach (var obstacleArray in  ObstacleManager.Instance.obstacles)
             {
-                if(obstacle.isActive){
-                    var isHit = false;
-                    foreach (var coll in obstacle.colliders)
-                    {
-                        if(GameManager.CheckBoxColl(position, size
-                        , obstacle.transform.position + coll.center, coll.size)){
-                            isHit = true;
+                foreach (var obstacle in obstacleArray)
+                {
+                    if(obstacle.isActive && obstacle.flyCount <= 0){
+                        var isHit = false;
+                        foreach (var coll in obstacle.colliders)
+                        {
+                            if(GameManager.CheckBoxColl(position, size
+                            , obstacle.transform.position + coll.center, coll.size)){
+                                isHit = true;
+                                break;
+                            }
+                        }
+                        if(isHit){
+                            if(this.isShield){
+                                this.isShield = false;
+                                this.shieldObj.SetActive(false);
+                                this.shieldCount = 0;
+                                this.shieldInterval = this.ShieldInterval;
+                            }else if(!this.isInvincible){
+                                GameManager.Instance.GameOver();
+                            }
+                            this.flyVec = (this.transform.position - obstacle.transform.position - obstacle.center).normalized * 0.3f;
+                            obstacle.Fly(-this.flyVec + this.moveDirection);
+                            this.flyCount = this.FlyCount;
+                            if(this.flyVec.y < 0)this.flyVec.y = -this.flyVec.y;
+                            this.rotateAxis = this.flyVec;
+                            this.rotateAxis.y = 0;
+                            this.rotateAxis = Quaternion.Euler(0, 90, 0) * this.rotateAxis;
                             break;
                         }
                     }
-                    if(isHit){
-                        if(this.isShield){
-                            obstacle.SetActive(false);
-                            this.isShield = false;
-                            this.shieldObj.SetActive(false);
-                            this.shieldCount = 0;
-                            this.shieldInterval = this.ShieldInterval;
-                        }else{
-                            if(!this.isInvincible) GameManager.Instance.GameOver();
-                        }
-                        break;
+                }
+            }
+
+            //
+            this.moveDirection = Vector3.zero;
+
+            //スコア表示更新
+            this.scoreText.text = this.GetScore().ToString();
+
+            //攻撃実行
+            this.attackInterval++;
+            if(!this.isJump && this.attackInterval >= this.AttackInterval){
+                this.attackInterval = 0;
+                this.weapon.Shot();
+                //
+                if(this.isWingman){
+                    foreach (var wingman in wingmans)
+                    {
+                        wingman.Shot();
                     }
                 }
             }
-        }
 
-        //スコア表示更新
-        this.scoreText.text = this.GetScore().ToString();
-
-        //攻撃実行
-        this.attackInterval++;
-        if(!this.isJump && this.attackInterval >= this.AttackInterval){
-            this.attackInterval = 0;
-            this.weapon.Shot();
-            //
-            if(this.isWingman){
-                foreach (var wingman in wingmans)
-                {
-                    wingman.Shot();
+            //シールド
+            if(this.shieldCount > 0){
+                this.shieldCount--;
+                Counter.Display((float)this.shieldCount / (float)this.ShieldCount);
+                if(this.shieldCount <= 0){
+                    this.isShield = false;
+                    this.shieldObj.SetActive(false);
+                    this.shieldInterval = this.ShieldInterval;
                 }
             }
-        }
-
-        //シールド
-        if(this.shieldCount > 0){
-            this.shieldCount--;
-            Counter.Display((float)this.shieldCount / (float)this.ShieldCount);
-            if(this.shieldCount <= 0){
-                this.isShield = false;
-                this.shieldObj.SetActive(false);
-                this.shieldInterval = this.ShieldInterval;
-            }
-        }
-        if(this.shieldInterval > 0){
-            this.shieldInterval--;
-            if(this.shieldInterval <= 0){
+            if(this.shieldInterval > 0){
+                this.shieldInterval--;
+                if(this.shieldInterval <= 0){
+                }
             }
         }
     }
@@ -214,7 +235,7 @@ public class Player : MonoBehaviour
 
     //スコア計算
     int GetScore(){
-        return (this.posResetMil + (int)transform.position.z) + this.itemScore;
+        return (this.posResetMil + (int)transform.position.z) / 2 + this.itemScore;
     }
     public void ItemScore(int score){
         this.itemScore += score;
@@ -249,6 +270,10 @@ public class Player : MonoBehaviour
         //
         this.isJump = false;
         this.jumpSpeed = 0;
+        //
+        this.graphicsTrf.position = Vector3.zero;
+        this.graphicsTrf.rotation = Quaternion.identity;
+        this.flyCount = 0;
         //
         this.isShield = false;
         this.shieldCount = 0;

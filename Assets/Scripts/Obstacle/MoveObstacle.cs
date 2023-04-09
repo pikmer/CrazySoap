@@ -17,9 +17,10 @@ public class MoveObstacle : Obstacle
         this.referenceX = position.x;
     }
 
-    void FixedUpdate()
+    protected override void EachUpdate()
     {
-        if(!this.isActive) return;
+        // base.FixedUpdate();
+        if(!this.isActive && this.flyCount > 0) return;
         
         this.moveCount++;
         if(this.moveCount >= this.MoveCount * 2){

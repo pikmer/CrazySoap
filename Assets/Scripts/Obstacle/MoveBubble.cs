@@ -15,7 +15,7 @@ public class MoveBubble : Bubble
         this.velocity = Vector3.left * Random.Range(this.moveSpeedMin, this.moveSpeedMax);
     }
 
-    void FixedUpdate()
+    protected override void EachUpdate()
     {
         if(!this.isActive) return;
         

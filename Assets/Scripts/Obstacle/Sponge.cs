@@ -31,7 +31,7 @@ public class Sponge : HealthObstacle
         {
             foreach (var obstacle in obstacleArray)
             {
-                if(obstacle.isActive){
+                if(obstacle.isActive && obstacle.flyCount <= 0){
                     var isHit = false;
                     foreach (var coll in obstacle.colliders)
                     {
@@ -42,7 +42,8 @@ public class Sponge : HealthObstacle
                         }
                     }
                     if(isHit){
-                        obstacle.SetActive(false);
+                        var flyVec = obstacle.transform.position + obstacle.center - this.transform.position;
+                        obstacle.Fly(flyVec.normalized * 1f);
                     }
                 }
             }

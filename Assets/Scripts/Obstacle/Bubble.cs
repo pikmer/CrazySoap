@@ -23,4 +23,8 @@ public class Bubble : HealthObstacle
     public override void Protect(Coin coin){
         this.coin = coin;
     }
+    
+    public override void Fly(Vector3 flyVec){
+        this.Damage(this.MaxHP);
+    }
 }

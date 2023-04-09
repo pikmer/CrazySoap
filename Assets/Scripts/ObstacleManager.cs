@@ -60,7 +60,7 @@ public class ObstacleManager : MonoBehaviour
             Player.Instance.ChangesideStream();
         }
         if(this.waveTime % (this.WaveTime / 6) == 0){
-            this.SetStage(5);
+            this.SetStage(2);
         }
     }
 
@@ -114,7 +114,7 @@ public class ObstacleManager : MonoBehaviour
     }
 
     public void GameStart(){
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 3; i++)
         {
             this.SetStage(i);
         }

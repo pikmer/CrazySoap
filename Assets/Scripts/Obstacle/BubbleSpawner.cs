@@ -9,10 +9,8 @@ public class BubbleSpawner : Obstacle
     int interval;
     public int Interval = 6;
 
-    void FixedUpdate()
+    protected override void EachUpdate()
     {
-        if(!this.isActive) return;
-
         this.interval++;
         if(this.interval >= this.Interval){
             ObstacleManager.Instance.SetObstacle(this.transform.position + spawnPoint 

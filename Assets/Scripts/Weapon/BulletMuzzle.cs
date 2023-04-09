@@ -61,7 +61,7 @@ public class BulletMuzzle : MonoBehaviour
                 {
                     foreach (var obstacle in obstacleArray)
                     {
-                        if(obstacle.isActive){
+                        if(obstacle.isActive && obstacle.flyCount <= 0){
                             var isHit = false;
                             foreach (var coll in obstacle.colliders)
                             {

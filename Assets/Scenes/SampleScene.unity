@@ -493,6 +493,7 @@ MonoBehaviour:
   graphics: {fileID: 2062235250}
   colliders:
   - {fileID: 16111448}
+  center: {x: 0, y: 0.8, z: 0}
   MaxHP: 10
   isHPbar: 1
   HPbarObj: {fileID: 1632768785}
@@ -8940,6 +8941,7 @@ MonoBehaviour:
   graphics: {fileID: 681539107}
   colliders:
   - {fileID: 812009945}
+  center: {x: 0, y: 1, z: 0}
   meshes:
   - {fileID: 3650503519647551762, guid: d24359f57aaada246ab17c18f97786d3, type: 3}
   materials:
@@ -9683,6 +9685,7 @@ MonoBehaviour:
   graphics: {fileID: 164962500}
   colliders:
   - {fileID: 857346525}
+  center: {x: 0, y: 0.35, z: 0}
   MaxHP: 1
   isHPbar: 0
   HPbarObj: {fileID: 540696665}
@@ -11977,6 +11980,7 @@ MonoBehaviour:
   graphics: {fileID: 2074243046}
   colliders:
   - {fileID: 1157893023}
+  center: {x: 0, y: 1, z: 0}
   MoveCount: 60
   moveDistance: 5
 --- !u!65 &1157893023
@@ -13124,6 +13128,7 @@ MonoBehaviour:
   graphics: {fileID: 141116725}
   colliders:
   - {fileID: 1321776587}
+  center: {x: 0, y: 0.5, z: 0}
   spawnPoint: {x: -1, y: 0, z: 0}
   Interval: 10
 --- !u!65 &1321776587
@@ -13540,6 +13545,7 @@ MonoBehaviour:
   - {fileID: 1843320071}
   - {fileID: 57536590}
   - {fileID: 376755211}
+  center: {x: 0, y: 1.2, z: 0}
   meshes:
   - {fileID: -6264831526926562434, guid: d24359f57aaada246ab17c18f97786d3, type: 3}
   materials:
@@ -13844,6 +13850,7 @@ MonoBehaviour:
   graphics: {fileID: 1601683091}
   colliders:
   - {fileID: 1424403806}
+  center: {x: 0, y: 1, z: 0}
   MoveCount: 60
   moveDistance: -5
 --- !u!65 &1424403806
@@ -13908,6 +13915,7 @@ MonoBehaviour:
   graphics: {fileID: 176904689}
   colliders:
   - {fileID: 1425093166}
+  center: {x: 0, y: 0.35, z: 0}
   MaxHP: 1
   isHPbar: 0
   HPbarObj: {fileID: 2137016331}
@@ -15508,6 +15516,7 @@ MonoBehaviour:
   graphics: {fileID: 1400207880}
   colliders:
   - {fileID: 1590427019}
+  center: {x: 0, y: 0.35, z: 0}
   MaxHP: 1
   isHPbar: 0
   HPbarObj: {fileID: 1235063670}
@@ -19334,6 +19343,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96beddc9eceacfb49951d6123833a47c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  graphicsTrf: {fileID: 793947561}
   weapon: {fileID: 1947800934}
   wingmanObj: {fileID: 692513206}
   wingmans:
@@ -20326,6 +20336,7 @@ MonoBehaviour:
   graphics: {fileID: 1109513397}
   colliders:
   - {fileID: 2104037699}
+  center: {x: 0, y: 0.375, z: 0}
   MaxHP: 4
   isHPbar: 1
   HPbarObj: {fileID: 622522740}
