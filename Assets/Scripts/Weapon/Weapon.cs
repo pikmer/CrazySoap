@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Weapon : MonoBehaviour
 {
@@ -21,11 +22,34 @@ public class Weapon : MonoBehaviour
     public BulletMuzzle[] twinFrontShot;
     public BulletMuzzle[] twinShot;
 
+    public RectTransform getUI;
+    public Image getSprite;
+    public Text getText;
+    public Sprite[] getSprites;
+    public string[] getTexts;
+    int displayCount;
+    int DisplayCount = 150;
+
     //アップグレード
     public List<ItemProbability> itemProbs = new List<ItemProbability>();
 
     void Start(){
         this.isShot = new bool[this.weaponInfos.Length];
+    }
+
+    void FixedUpdate(){
+        if(this.displayCount > 0){
+            this.displayCount--;
+            if(this.displayCount >= this.DisplayCount - 10){
+                var pos = this.getUI.anchoredPosition3D;
+                pos.x = -220f + 23f * (float)(this.DisplayCount - this.displayCount);
+                this.getUI.anchoredPosition3D = pos;
+            }else if(this.displayCount < 10){
+                var pos = this.getUI.anchoredPosition3D;
+                pos.x = -220f + 23f * (float)this.displayCount;
+                this.getUI.anchoredPosition3D = pos;
+            }
+        }
     }
 
     public void Shot(){
@@ -83,6 +107,10 @@ public class Weapon : MonoBehaviour
 
     public void SingleShotGet(){
         this.isSingleShot = true;
+        //UI
+        this.getSprite.sprite = this.getSprites[0];
+        this.getText.text = this.getTexts[0];
+        this.displayCount = this.DisplayCount;
         
         // for (int i = 0; i < this.isShot.Length; i++)
         // {
@@ -114,6 +142,10 @@ public class Weapon : MonoBehaviour
                 var select = this.weaponInfos[itemProb.weaponIndex];
                 select.level++;
                 select.interval = select.Interval - select.level;
+                //UI
+                this.getSprite.sprite = this.getSprites[itemProb.weaponIndex + 1];
+                this.getText.text = this.getTexts[itemProb.weaponIndex + 1];
+                this.displayCount = this.DisplayCount;
                 break;
             }
         }
@@ -126,6 +158,11 @@ public class Weapon : MonoBehaviour
         {
             this.weaponInfos[i].level = 0;
         }
+        
+        var pos = this.getUI.anchoredPosition3D;
+        pos.x = -220;
+        this.getUI.anchoredPosition3D = pos;
+        this.displayCount = 0;
     }
 
     class WeaponInfo{
