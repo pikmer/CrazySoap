@@ -64,21 +64,21 @@ public class SupportItem : MonoBehaviour
             if(this.magInterval <= 0){
                 CoinParent.Instance.Magnet(false);
             }
-            Counter.Display((float)this.magInterval / (float)this.MagInterval);
+            Counter.Display((float)this.magInterval / (float)this.MagInterval, 0);
         }
         if(this.doubleInterval > 0){
             this.doubleInterval--;
             if(this.doubleInterval <= 0){
                 CoinParent.Instance.DoubleGet(false);
             }
-            Counter.Display((float)this.doubleInterval / (float)this.DoubleInterval);
+            Counter.Display((float)this.doubleInterval / (float)this.DoubleInterval, 1);
         }
         if(this.wingmanInterval > 0){
             this.wingmanInterval--;
             if(this.wingmanInterval <= 0){
                 Player.Instance.Wingman(false);
             }
-            Counter.Display((float)this.wingmanInterval / (float)this.WingmanInterval);
+            Counter.Display((float)this.wingmanInterval / (float)this.WingmanInterval, 2);
         }
     }
 

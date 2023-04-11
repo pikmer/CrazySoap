@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Counter : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class Counter : MonoBehaviour
 
     public RectTransform dotsParent;
     Transform[] dots = new Transform[10];
+
+    public Image image;
+    static Sprite[] sprites;
+    public Sprite[] spritesTemp;
     
     RectTransform rectTrf;
     Vector3 hidePosition = new Vector3(-220, 0, 0);
@@ -21,6 +26,10 @@ public class Counter : MonoBehaviour
         for (int i = 0; i < this.dots.Length; i++)
         {
             this.dots[i] = this.dotsParent.GetChild(i);
+        }
+
+        if(sprites == null && this.spritesTemp.Length > 0){
+            sprites = this.spritesTemp;
         }
 
         this.index = counters.Count;
@@ -57,11 +66,15 @@ public class Counter : MonoBehaviour
         this.value = 0;
     }
 
-    static public void Display(float value){
+    static public void Display(float value, int index){
         foreach (var counter in counters)
         {
             if(counter.value == 0){
                 counter.value = value;
+                var sprite = sprites[index];
+                if(counter.image.sprite != sprite){
+                    counter.image.sprite = sprite;
+                }
                 break;
             }
         }

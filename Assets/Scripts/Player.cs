@@ -59,6 +59,11 @@ public class Player : MonoBehaviour
     int shieldCount;
     int ShieldCount = 15 * 60;
     public Counter shieldCounter;
+    public Text shieldText;
+    public Image shieldImage;
+    public Sprite shieldSprite;
+    public Sprite watchSprite;
+    int shieldUseCount = 3;
 
     //スコア
     int posResetMil;
@@ -71,13 +76,18 @@ public class Player : MonoBehaviour
         Instance = this;
 
         this.wallDistance -= normalColl.size.x / 2f;
+
+        this.shieldText.text = this.shieldUseCount.ToString();
     }
 
     void Update(){
-        if(Input.GetKeyDown(KeyCode.Space) && this.shieldCount <= 0 && this.shieldInterval <= 0){
+        if(Input.GetKeyDown(KeyCode.Space) && this.shieldUseCount > 0 && this.shieldCount <= 0 && this.shieldInterval <= 0){
             this.isShield = true;
             this.shieldCount = this.ShieldCount;
             this.shieldObj.SetActive(true);
+
+            this.shieldUseCount--;
+            this.shieldText.text = this.shieldUseCount.ToString();
         }
         //ジャンプ仮
         if(Input.GetKeyDown(KeyCode.W)){
@@ -155,6 +165,9 @@ public class Player : MonoBehaviour
                                 this.shieldObj.SetActive(false);
                                 this.shieldCount = 0;
                                 this.shieldInterval = this.ShieldInterval;
+                                this.shieldText.color = new Color(1f, 0.5f, 0.5f);
+                                this.shieldText.text = (this.shieldInterval / 60).ToString();
+                                this.shieldImage.sprite = this.watchSprite;
                             }else if(!this.isInvincible){
                                 GameManager.Instance.GameOver();
                             }
@@ -194,16 +207,25 @@ public class Player : MonoBehaviour
             //シールド
             if(this.shieldCount > 0){
                 this.shieldCount--;
-                Counter.Display((float)this.shieldCount / (float)this.ShieldCount);
+                Counter.Display((float)this.shieldCount / (float)this.ShieldCount, 3);
                 if(this.shieldCount <= 0){
                     this.isShield = false;
                     this.shieldObj.SetActive(false);
                     this.shieldInterval = this.ShieldInterval;
+                    this.shieldText.color = new Color(1f, 0.5f, 0.5f);
+                    this.shieldText.text = (this.shieldInterval / 60).ToString();
+                    this.shieldImage.sprite = this.watchSprite;
                 }
             }
             if(this.shieldInterval > 0){
                 this.shieldInterval--;
+                if(this.shieldInterval % 60 == 0){
+                    this.shieldText.text = (this.shieldInterval / 60).ToString();
+                }
                 if(this.shieldInterval <= 0){
+                    this.shieldText.color = Color.white;
+                    this.shieldText.text = this.shieldUseCount.ToString();
+                    this.shieldImage.sprite = this.shieldSprite;
                 }
             }
         }
@@ -279,6 +301,9 @@ public class Player : MonoBehaviour
         this.shieldCount = 0;
         this.shieldInterval = 0;
         this.shieldObj.SetActive(false);
+        this.shieldText.text = this.shieldUseCount.ToString();
+        this.shieldText.color = Color.white;
+        this.shieldImage.sprite = this.shieldSprite;
         //スコア関係
         this.posResetMil = 0;
         this.itemScore = 0;
