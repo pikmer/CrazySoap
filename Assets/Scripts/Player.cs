@@ -7,7 +7,8 @@ public class Player : MonoBehaviour
 {
     public static Player Instance;
 
-    bool isDead = true;
+    [HideInInspector][System.NonSerialized]
+    public bool isDead = true;
 	//無敵モード
 	bool isInvincible = false;
 
@@ -90,9 +91,9 @@ public class Player : MonoBehaviour
             this.shieldText.text = this.shieldUseCount.ToString();
         }
         //ジャンプ仮
-        if(Input.GetKeyDown(KeyCode.W)){
-            this.Jump();
-        }
+        // if(Input.GetKeyDown(KeyCode.W)){
+        //     this.Jump();
+        // }
     }
 
     void FixedUpdate()
@@ -160,6 +161,9 @@ public class Player : MonoBehaviour
                             }
                         }
                         if(isHit){
+                            this.flyVec = (this.transform.position - obstacle.transform.position - obstacle.center).normalized * 0.3f;
+                            obstacle.Fly(-this.flyVec + this.moveDirection);
+                            //
                             if(this.isShield){
                                 this.isShield = false;
                                 this.shieldObj.SetActive(false);
@@ -169,15 +173,13 @@ public class Player : MonoBehaviour
                                 this.shieldText.text = (this.shieldInterval / 60).ToString();
                                 this.shieldImage.sprite = this.watchSprite;
                             }else if(!this.isInvincible){
-                                GameManager.Instance.GameOver();
+                                GameManager.Instance.PlayerKilled();
+                                this.flyCount = this.FlyCount;
+                                if(this.flyVec.y < 0)this.flyVec.y = -this.flyVec.y;
+                                this.rotateAxis = this.flyVec;
+                                this.rotateAxis.y = 0;
+                                this.rotateAxis = Quaternion.Euler(0, 90, 0) * this.rotateAxis;
                             }
-                            this.flyVec = (this.transform.position - obstacle.transform.position - obstacle.center).normalized * 0.3f;
-                            obstacle.Fly(-this.flyVec + this.moveDirection);
-                            this.flyCount = this.FlyCount;
-                            if(this.flyVec.y < 0)this.flyVec.y = -this.flyVec.y;
-                            this.rotateAxis = this.flyVec;
-                            this.rotateAxis.y = 0;
-                            this.rotateAxis = Quaternion.Euler(0, 90, 0) * this.rotateAxis;
                             break;
                         }
                     }
@@ -279,8 +281,38 @@ public class Player : MonoBehaviour
         this.scoreText.text = "";
     }
 
-    public void GameOver(){
+    public void PlayerKilled(){
         this.isDead = true;
+    }
+    public void Continue(){
+        this.isDead = false;
+        this.graphicsTrf.localPosition = Vector3.zero;
+        this.graphicsTrf.localRotation = Quaternion.identity;
+        this.flyCount = 0;
+        //周りを吹き飛ばす
+        var position = this.transform.position;
+        var size = new Vector3(15f, 10f, 70f);
+        foreach (var obstacleArray in  ObstacleManager.Instance.obstacles)
+        {
+            foreach (var obstacle in obstacleArray)
+            {
+                if(obstacle.isActive && obstacle.flyCount <= 0){
+                    var isHit = false;
+                    foreach (var coll in obstacle.colliders)
+                    {
+                        if(GameManager.CheckBoxColl(position, size
+                        , obstacle.transform.position + coll.center, coll.size)){
+                            isHit = true;
+                            break;
+                        }
+                    }
+                    if(isHit){
+                        var flyVec = obstacle.transform.position + obstacle.center - this.transform.position;
+                        obstacle.Fly(flyVec.normalized * 1f);
+                    }
+                }
+            }
+        }
     }
 
     public void Retry(){
@@ -293,8 +325,8 @@ public class Player : MonoBehaviour
         this.isJump = false;
         this.jumpSpeed = 0;
         //
-        this.graphicsTrf.position = Vector3.zero;
-        this.graphicsTrf.rotation = Quaternion.identity;
+        this.graphicsTrf.localPosition = Vector3.zero;
+        this.graphicsTrf.localRotation = Quaternion.identity;
         this.flyCount = 0;
         //
         this.isShield = false;

@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
 
     public GameObject titleUI;
+    public GameObject continueUI;
     public GameObject gameoverUI;
 
     void Awake()
@@ -20,8 +21,17 @@ public class UIManager : MonoBehaviour
         this.titleUI.SetActive(false);
     }
 
+    public void ContinueCheck(){
+        this.continueUI.SetActive(true);
+    }
+
+    public void ContinueDelaySet(){
+        this.continueUI.SetActive(false);
+    }
+
     public void GameOver(){
         this.gameoverUI.SetActive(true);
+        this.continueUI.SetActive(false);
     }
 
     public void Retry(){

@@ -40,6 +40,39 @@ public class SupportItem : MonoBehaviour
     }
 
     void FixedUpdate(){
+        var playerDead = Player.Instance.isDead;
+
+        //インターバル
+        if(this.magInterval > 0){
+            if(!playerDead){
+                this.magInterval--;
+                if(this.magInterval <= 0){
+                    CoinParent.Instance.Magnet(false);
+                }
+            }
+            Counter.Display((float)this.magInterval / (float)this.MagInterval, 0);
+        }
+        if(this.doubleInterval > 0){
+            if(!playerDead){
+                this.doubleInterval--;
+                if(this.doubleInterval <= 0){
+                    CoinParent.Instance.DoubleGet(false);
+                }
+            }
+            Counter.Display((float)this.doubleInterval / (float)this.DoubleInterval, 1);
+        }
+        if(this.wingmanInterval > 0){
+            if(!playerDead){
+                this.wingmanInterval--;
+                if(this.wingmanInterval <= 0){
+                    Player.Instance.Wingman(false);
+                }
+            }
+            Counter.Display((float)this.wingmanInterval / (float)this.WingmanInterval, 2);
+        }
+        
+        if(playerDead) return;
+
         //接触確認
         var player = Player.Instance;
         var playerPosition = player.transform.position + player.normalColl.center;
@@ -56,29 +89,6 @@ public class SupportItem : MonoBehaviour
                     break;
                 }
             }
-        }
-
-        //インターバル
-        if(this.magInterval > 0){
-            this.magInterval--;
-            if(this.magInterval <= 0){
-                CoinParent.Instance.Magnet(false);
-            }
-            Counter.Display((float)this.magInterval / (float)this.MagInterval, 0);
-        }
-        if(this.doubleInterval > 0){
-            this.doubleInterval--;
-            if(this.doubleInterval <= 0){
-                CoinParent.Instance.DoubleGet(false);
-            }
-            Counter.Display((float)this.doubleInterval / (float)this.DoubleInterval, 1);
-        }
-        if(this.wingmanInterval > 0){
-            this.wingmanInterval--;
-            if(this.wingmanInterval <= 0){
-                Player.Instance.Wingman(false);
-            }
-            Counter.Display((float)this.wingmanInterval / (float)this.WingmanInterval, 2);
         }
     }
 

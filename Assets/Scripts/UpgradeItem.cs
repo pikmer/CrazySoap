@@ -7,7 +7,8 @@ public class UpgradeItem : MonoBehaviour
     public static UpgradeItem Instance;
 
     GameObject[] items = new GameObject[10];
-    public GameObject prefab;
+    public GameObject startItem;
+    float startItemSpeed;
 
     Vector3 collCenter = new Vector3(0, 0.25f, 0);
     Vector3 collSize = new Vector3(1.0f, 1.0f, 1.0f);
@@ -18,7 +19,7 @@ public class UpgradeItem : MonoBehaviour
         
         //アイテム作成
         for(int i=0; i < this.items.Length; i++){
-        	GameObject item = Instantiate(this.prefab, Vector3.zero, Quaternion.identity);
+        	GameObject item = Instantiate(this.startItem, Vector3.zero, Quaternion.identity);
 			item.transform.SetParent(this.transform);
         	item.SetActive(false);
 			this.items[i] = item;
@@ -26,6 +27,9 @@ public class UpgradeItem : MonoBehaviour
     }
 
     void FixedUpdate(){
+        
+        if(Player.Instance.isDead) return;
+        
         //接触確認
         var player = Player.Instance;
         var playerPosition = player.transform.position + player.normalColl.center;
@@ -42,6 +46,26 @@ public class UpgradeItem : MonoBehaviour
                 }
             }
         }
+        if(this.startItem.activeSelf){
+            if(this.startItem.transform.position.z - Player.Instance.transform.position.z <= 10){
+                var direction = playerPosition - this.startItem.transform.position;
+                var magMove = direction.normalized * this.startItemSpeed;
+                this.startItem.transform.position += magMove;
+                this.startItemSpeed += 0.02f;
+                //マグネット判定
+                if(direction.sqrMagnitude <= this.startItemSpeed * this.startItemSpeed){
+                    //強化実行
+                    Player.Instance.WeaponUpgrade();
+                    this.startItem.SetActive(false);
+                }
+            }
+        }
+    }
+
+    public void SetStartItem(Vector3 position){
+        this.startItemSpeed = 0.7f;
+        this.startItem.SetActive(true);
+        this.startItem.transform.position = position;
     }
 
     public void SetItem(Vector3 position)

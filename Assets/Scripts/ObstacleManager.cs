@@ -88,8 +88,8 @@ public class ObstacleManager : MonoBehaviour
         {
             if(!obstacle.isActive){
                 obstacle.Init(position);
+                obstacle.Protect(coin);
                 if(coin != null){
-                    obstacle.Protect(coin);
                     coin.Protect();
                 }
                 return;
@@ -118,7 +118,7 @@ public class ObstacleManager : MonoBehaviour
         {
             this.SetStage(i);
         }
-        UpgradeItem.Instance.SetItem(new Vector3(0, 0, 5));
+        UpgradeItem.Instance.SetStartItem(new Vector3(0, 0, 50));
     }
 
     public void Retry(){
