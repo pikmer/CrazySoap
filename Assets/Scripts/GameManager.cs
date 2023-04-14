@@ -77,13 +77,13 @@ public class GameManager : MonoBehaviour
     }
 
     public void PlayerKilled(){
+        this.isGame = false;
         this.gameOverDelay = this.GameOverDelay;
         CoinParent.Instance.PlayerKilled();
         Player.Instance.PlayerKilled();
     }
 
     public void ContinueCheck(){
-        this.isGame = false;
         UIManager.Instance.ContinueCheck();
     }
 

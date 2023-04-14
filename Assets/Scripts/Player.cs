@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
 	//無敵モード
 	bool isInvincible = false;
 
+    Vector3 startPos = new Vector3(0, 0, 0);
+
     Vector3 moveDirection = Vector3.zero;
     [HideInInspector][System.NonSerialized]
     public Vector3 forwardVelosity = new Vector3(0, 0, 0.5f);
@@ -28,8 +30,6 @@ public class Player : MonoBehaviour
 
     //横の水流
     float sideStream = 0;
-    float minStream = 0.015f;
-    float maxStream = 0.03f;
 
     [HideInInspector][System.NonSerialized]
     public float positionResetRange = 100f;
@@ -79,6 +79,8 @@ public class Player : MonoBehaviour
         this.wallDistance -= normalColl.size.x / 2f;
 
         this.shieldText.text = this.shieldUseCount.ToString();
+
+        this.transform.position = this.startPos;
     }
 
     void Update(){
@@ -249,12 +251,8 @@ public class Player : MonoBehaviour
         this.jumpSpeed = this.JumpSpeed;
     }
 
-    public void ChangesideStream(){
-        if(Random.value < 0.5f){
-            this.sideStream = Random.Range(this.minStream, this.maxStream);
-        }else{
-            this.sideStream = Random.Range(-this.maxStream, -this.minStream);
-        }
+    public void ChangesideStream(float sideStream){
+        this.sideStream = sideStream;
     }
 
     //スコア計算
@@ -316,7 +314,7 @@ public class Player : MonoBehaviour
     }
 
     public void Retry(){
-        this.transform.position = Vector3.zero;
+        this.transform.position = this.startPos;
         this.sideStream = 0;
         weapon.Retry();
         this.isWingman = false;
