@@ -105,6 +105,9 @@ public class Player : MonoBehaviour
                 this.flyCount--;
                 this.graphicsTrf.position += this.flyVec;
                 this.graphicsTrf.Rotate(this.rotateAxis, 20f, Space.World);
+                if(this.flyCount <= 0){
+                    this.graphicsTrf.gameObject.SetActive(false);
+                }
             }
         }else{
             var transform = this.transform;
@@ -286,6 +289,7 @@ public class Player : MonoBehaviour
         this.isDead = false;
         this.graphicsTrf.localPosition = Vector3.zero;
         this.graphicsTrf.localRotation = Quaternion.identity;
+        this.graphicsTrf.gameObject.SetActive(true);
         this.flyCount = 0;
         //周りを吹き飛ばす
         var position = this.transform.position;
@@ -325,6 +329,7 @@ public class Player : MonoBehaviour
         //
         this.graphicsTrf.localPosition = Vector3.zero;
         this.graphicsTrf.localRotation = Quaternion.identity;
+        this.graphicsTrf.gameObject.SetActive(true);
         this.flyCount = 0;
         //
         this.isShield = false;

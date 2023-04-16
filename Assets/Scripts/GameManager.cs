@@ -67,6 +67,7 @@ public class GameManager : MonoBehaviour
         SupportItem.Instance.PositionReset();
         CoinParent.Instance.PositionReset();
         Fog.Instance.PositionReset();
+        BubbleEffect.Instance.PositionReset();
     }
 
     public void GameStart(){

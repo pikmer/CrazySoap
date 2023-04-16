@@ -25,6 +25,8 @@ public class ObstacleManager : MonoBehaviour
     public UnityAction<float>[] nowStages;
 
     //水流の表現
+    public Transform[] currents;
+    int currentIndex = 0;
     Vector3 leftWaterPos = new Vector3(8.57f, 2.6f, 190f);     //10 + 180
     Vector3 rightWaterPos = new Vector3(-9.75f, 5.25f, 190f);
     public Transform waterEffect;
@@ -35,6 +37,11 @@ public class ObstacleManager : MonoBehaviour
     float maxStream = 0.03f;
     //
     public RectTransform currentArrow;
+    int currentArrowCount = 0;
+    int CurrentArrowCount = 120;
+    //
+    public Material currentMat;
+    float currentMatOffset;
 
     void Awake()
     {
@@ -60,14 +67,33 @@ public class ObstacleManager : MonoBehaviour
         {
             var waterEffect = Instantiate(this.waterEffect, Vector3.zero, Quaternion.identity);
             waterEffect.SetParent(this.waterEffect.parent);
+            waterEffect.position = Vector3.back * 10f;
             this.waterEffects[i] = waterEffect;
         }
 
         this.stageInfo.SetManager(this);
+
+        this.currentArrow.gameObject.SetActive(false);
     }
 
     void FixedUpdate()
     {
+        //水流UI
+        if(this.currentArrowCount > 0){
+            this.currentArrowCount--;
+            var value = this.currentArrowCount % 30 - 15;
+            this.currentArrow.anchoredPosition3D = new Vector3((float)value * 1.1f, 0, 0);
+            if(this.currentArrowCount <= 0){
+                this.currentArrow.gameObject.SetActive(false);
+            }
+        }
+        //水流
+        this.currentMatOffset -= 0.05f;
+        if(this.currentMatOffset <= 0){
+            this.currentMatOffset += 1f;
+        }
+        this.currentMat.mainTextureOffset = new Vector2(this.currentMatOffset, 0);
+
         if(!GameManager.Instance.isGame) return;
 
         this.waveTime++;
@@ -75,7 +101,7 @@ public class ObstacleManager : MonoBehaviour
             this.wave++;
             this.waveTime = 0;
         }
-        //水流変更
+        //水流変更 2インナーウェーブ前
         if((this.waveTime + this.WaveTime / 3) % (this.WaveTime / 2) == 0){
             if(Random.value < 0.5f){
                 this.sideStream = Random.Range(this.minStream, this.maxStream);
@@ -86,6 +112,10 @@ public class ObstacleManager : MonoBehaviour
         //水流変更確定
         if(this.waveTime % (this.WaveTime / 2) == 0){
             Player.Instance.ChangesideStream(this.sideStream);
+            this.currentArrowCount = this.CurrentArrowCount;
+            this.currentArrow.gameObject.SetActive(true);
+            var angle = this.sideStream < 0 ? 0 : 180f;
+            this.currentArrow.parent.rotation = Quaternion.Euler(0, 0, angle);
         }
         //水流演出
         if(this.waveTime % 40 == 0 && this.sideStream != 0){
@@ -100,11 +130,6 @@ public class ObstacleManager : MonoBehaviour
         //ステージ作成
         if(this.waveTime % (this.WaveTime / 6) == 0){
             this.SetStage(2);
-        }
-
-        this.currentArrow.anchoredPosition3D += Vector3.left;
-        if(this.currentArrow.anchoredPosition3D.x <= -30f){
-            this.currentArrow.anchoredPosition3D += Vector3.right * 30f;
         }
     }
 
@@ -124,6 +149,18 @@ public class ObstacleManager : MonoBehaviour
         //ランダムセット
         else{
             this.nowStages[Random.Range(0, this.nowStages.Length)](playerPosZ + 100 * z);
+        }
+
+        //水流
+        if(this.innerWave >= 4){
+            if(this.sideStream > 0){
+                this.currents[this.currentIndex].rotation = Quaternion.Euler(0, 180, 1f);
+            }else{
+                this.currents[this.currentIndex].rotation = Quaternion.Euler(0, 0, 1f);
+            }
+            this.currents[this.currentIndex].position = new Vector3(0, 0.15f, Player.Instance.transform.position.z + 250f);
+            this.currentIndex++;
+            if(this.currentIndex >= this.currents.Length) this.currentIndex = 0;
         }
     }
 
@@ -159,6 +196,10 @@ public class ObstacleManager : MonoBehaviour
         {
             effect.position -= Vector3.forward * positionResetRange;
         }
+        foreach (var current in this.currents)
+        {
+            current.position -= Vector3.forward * positionResetRange;
+        }
     }
 
     public void GameStart(){
@@ -179,8 +220,14 @@ public class ObstacleManager : MonoBehaviour
                 if(obstacle.isActive) obstacle.SetActive(false);
             }
         }
+        foreach (var current in this.currents)
+        {
+            current.position = Vector3.down * 10f;
+        }
+        this.currentIndex = 0;
 
         this.sideStream = 0;
+        this.currentArrow.gameObject.SetActive(false);
 
         this.effectIndex = 0;
         foreach (var effect in this.waterEffects)

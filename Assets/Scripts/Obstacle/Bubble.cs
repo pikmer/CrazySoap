@@ -13,6 +13,7 @@ public class Bubble : HealthObstacle
             if(this.coin != null){
                 this.coin.ProtectBreak();
             }
+            BubbleEffect.Instance.Play(this.transform.position + this.center);
         }else if(this.isHPbar){
             var size = this.HPbar.localScale;
             this.HPbar.localScale = new Vector3((float)this.HP / (float)this.MaxHP, size.y, size.z);
