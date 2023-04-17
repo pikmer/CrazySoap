@@ -11,7 +11,7 @@ public class UpgradeItem : MonoBehaviour
     float startItemSpeed;
 
     Vector3 collCenter = new Vector3(0, 0.25f, 0);
-    Vector3 collSize = new Vector3(1.0f, 1.0f, 1.0f);
+    Vector3 collSize = new Vector3(1.5f, 1.0f, 0.5f);
 
     void Awake()
     {
@@ -40,7 +40,7 @@ public class UpgradeItem : MonoBehaviour
                 if(GameManager.CheckBoxColl(item.transform.position + this.collCenter, this.collSize
                 , playerPosition, playerSize)){
                     //強化実行
-                    Player.Instance.WeaponUpgrade();
+                    Weapon.Instance.Upgrade();
                     item.SetActive(false);
                     break;
                 }
@@ -55,7 +55,7 @@ public class UpgradeItem : MonoBehaviour
                 //マグネット判定
                 if(direction.sqrMagnitude <= this.startItemSpeed * this.startItemSpeed){
                     //強化実行
-                    Player.Instance.WeaponUpgrade();
+                    Weapon.Instance.SingleShotGet();
                     this.startItem.SetActive(false);
                 }
             }
@@ -70,12 +70,16 @@ public class UpgradeItem : MonoBehaviour
 
     public void SetItem(Vector3 position)
     {
-		foreach (var item in this.items)
-		{
-            if(!item.activeSelf){
-                item.SetActive(true);
-                item.transform.position = position;
-                break;
+        if(Weapon.Instance.CheckMaxLevel()){
+            SupportItem.Instance.SetItemRandomAir(position);
+        }else{
+            foreach (var item in this.items)
+            {
+                if(!item.activeSelf){
+                    item.SetActive(true);
+                    item.transform.position = position;
+                    break;
+                }
             }
         }
     }

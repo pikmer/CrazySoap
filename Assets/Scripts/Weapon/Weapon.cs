@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Weapon : MonoBehaviour
 {
+    static public Weapon Instance;
+
     WeaponInfo[] weaponInfos = new WeaponInfo[]{
         new WeaponInfo(8, 10f),
         new WeaponInfo(8, 10f),
@@ -33,8 +35,10 @@ public class Weapon : MonoBehaviour
     //アップグレード
     public List<ItemProbability> itemProbs = new List<ItemProbability>();
 
-    void Start(){
+    void Awake(){
         this.isShot = new bool[this.weaponInfos.Length];
+
+        Instance = this;
     }
 
     void FixedUpdate(){
@@ -96,6 +100,11 @@ public class Weapon : MonoBehaviour
             //ワイドショット
             this.MuzzleShot(this.wideShot);
         }
+        
+        // SE
+        if(this.isSingleShot){
+            AudioManager.Instance.PlaySE(0);
+        }
     }
 
     void MuzzleShot(BulletMuzzle[] muzzles){
@@ -149,6 +158,19 @@ public class Weapon : MonoBehaviour
                 break;
             }
         }
+    }
+
+    public bool CheckMaxLevel(){
+        if(!this.isSingleShot){
+            return false;
+        }
+        foreach (var weaponInfo in this.weaponInfos)
+        {
+            if(weaponInfo.level < weaponInfo.Interval){
+                return false;
+            }
+        }
+        return true;
     }
 
     public void Retry(){

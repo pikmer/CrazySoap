@@ -10,7 +10,7 @@ public class SupportItem : MonoBehaviour
     public GameObject prefab;
 
     Vector3 collCenter = new Vector3(0, 0.25f, 0);
-    Vector3 collSize = new Vector3(1.0f, 1.0f, 1.0f);
+    Vector3 collSize = new Vector3(1.5f, 1.0f, 0.5f);
 
     //磁石
     int magInterval;
@@ -117,6 +117,10 @@ public class SupportItem : MonoBehaviour
     public void SetItemRandom(Vector3 position)
     {
         this.SetItem(position, Random.Range(0, this.meshes.Length));
+    }
+    public void SetItemRandomAir(Vector3 position)
+    {
+        this.SetItem(position, Random.Range(0, this.meshes.Length - 1));
     }
 
     public void SetItem(Vector3 position, int number)

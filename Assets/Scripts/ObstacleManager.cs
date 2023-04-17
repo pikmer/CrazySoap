@@ -144,7 +144,11 @@ public class ObstacleManager : MonoBehaviour
 
         //3の倍数は強化ポイント
         if(this.innerWave % 6 == 0){
-            this.stageInfo.Upgrade(playerPosZ + 100 * z);
+            if(this.innerWave < 24){
+                this.stageInfo.Upgrade(playerPosZ + 100 * z);
+            }else{
+                this.stageInfo.Wall(playerPosZ + 100 * z);
+            }
         }
         //ランダムセット
         else{
@@ -164,15 +168,11 @@ public class ObstacleManager : MonoBehaviour
         }
     }
 
-    public void SetObstacle(Vector3 position, int index, Coin coin = null){
+    public void SetObstacle(Vector3 position, int index){
         foreach (var obstacle in this.obstacles[index])
         {
             if(!obstacle.isActive){
                 obstacle.Init(position);
-                obstacle.Protect(coin);
-                if(coin != null){
-                    coin.Protect();
-                }
                 return;
             }
         }
@@ -234,5 +234,35 @@ public class ObstacleManager : MonoBehaviour
         {
             effect.position = Vector3.back * 10f;
         }
+    }
+
+    public void JumpItemSet(float forwardSpeed, float JumpSpeed, float gravity){
+        var playerPos = Player.Instance.transform.position;
+
+        for (int i = 0; i < 20; i++)
+        {
+            var value = (float)i * 5f;
+            CoinParent.Instance.SetCoin(playerPos + new Vector3(0, value * JumpSpeed - this.Drop((int)value) * gravity
+                , value * forwardSpeed));
+        }
+
+        var itemPosCount = 150f;
+        var itemPos = playerPos + new Vector3(0, itemPosCount * JumpSpeed - this.Drop((int)itemPosCount) * gravity
+            , itemPosCount * forwardSpeed);
+        itemPos.x = Random.value < 0.5f ? 5f : -5f;
+        UpgradeItem.Instance.SetItem(itemPos);
+        itemPos.x *= -1f;
+        SupportItem.Instance.SetItemRandomAir(itemPos);
+    }
+    float Drop(int frame){
+        float temp = 0;
+        for (int i = 0; i < frame; i++)
+        {
+            for (int j = 0; j < i+1; j++)
+            {
+            temp += 1;
+            }
+        }
+        return temp;
     }
 }

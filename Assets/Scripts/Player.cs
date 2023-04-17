@@ -36,10 +36,20 @@ public class Player : MonoBehaviour
 
     //吹っ飛ぶ演出
     public Transform graphicsTrf;
+    Vector3 graphicsOffset = new Vector3(0, 0.15f, 0);
     int flyCount = 0;
     int FlyCount = 30;
     Vector3 flyVec;
     Vector3 rotateAxis;
+
+    //移動の演出
+    float bodyTilt = 0;
+    float BodyTilt = 10f;
+    float befourBodyTilt = 0;
+    float addBodyTilt = 1f;
+    float returnBodyTilt = 2f;
+    //ジャンプの演出
+    float graphicsEulerAngleZ;
 
     //攻撃
     int attackInterval = 0;
@@ -116,9 +126,17 @@ public class Player : MonoBehaviour
             this.moveDirection += this.forwardVelosity;
             if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)){
                 this.moveDirection -= this.rightVelosity;
+                this.bodyTilt -= this.addBodyTilt;
+                if(this.bodyTilt < -this.BodyTilt){
+                    this.bodyTilt = -this.BodyTilt;
+                }
             }
             if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)){
                 this.moveDirection += this.rightVelosity;
+                this.bodyTilt += this.addBodyTilt;
+                if(this.bodyTilt > this.BodyTilt){
+                    this.bodyTilt = this.BodyTilt;
+                }
             }
             if(transform.position.z >= this.positionResetRange){
                 GameManager.Instance.PositionReset();
@@ -126,11 +144,31 @@ public class Player : MonoBehaviour
             //ジャンプ
             if(this.isJump){
                 this.moveDirection += Vector3.up * this.jumpSpeed;
+                //アニメーション
+                this.graphicsEulerAngleZ += 17f;
+                var up = Quaternion.Euler(0, 0, this.graphicsEulerAngleZ) * Vector3.up;
+                this.graphicsTrf.rotation = Quaternion.LookRotation(this.forwardVelosity + Vector3.up * this.jumpSpeed, up);
+                //
                 this.jumpSpeed -= this.gravity;
             }
             //横の流れ
             else{
                 this.moveDirection += Vector3.right * this.sideStream;
+                //移動のアニメーション
+                if(this.bodyTilt != this.befourBodyTilt){
+                    this.befourBodyTilt = this.bodyTilt;
+                    this.graphicsTrf.rotation = Quaternion.Euler(0, this.bodyTilt, 0);
+                }else if(this.bodyTilt != 0){
+                    if(this.bodyTilt > 0){
+                        this.bodyTilt -= this.returnBodyTilt;
+                    }else{
+                        this.bodyTilt += this.returnBodyTilt;
+                    }
+                    if(Mathf.Abs(this.bodyTilt) <= this.returnBodyTilt){
+                        this.bodyTilt = 0;
+                    }
+                    this.graphicsTrf.rotation = Quaternion.Euler(0, this.bodyTilt, 0);
+                }
             }
             
             //移動実行
@@ -146,6 +184,8 @@ public class Player : MonoBehaviour
             if(this.isJump && transform.position.y <= 0){
                 this.isJump = false;
                 transform.position = new Vector3(transform.position.x, 0, transform.position.z);
+                //
+                this.graphicsTrf.rotation = Quaternion.identity;
             }
 
             //接触確認
@@ -238,20 +278,10 @@ public class Player : MonoBehaviour
         }
     }
 
-    //アップグレード
-    public void WeaponUpgrade(){
-        //シングルショットを取ってないと、最優先でとる
-        if(!this.weapon.isSingleShot){
-            this.weapon.SingleShotGet();
-            return;
-        }else{
-            this.weapon.Upgrade();
-        }
-    }
-
     public void Jump(){
         this.isJump = true;
         this.jumpSpeed = this.JumpSpeed;
+        ObstacleManager.Instance.JumpItemSet(this.forwardVelosity.z, this.JumpSpeed, this.gravity);
     }
 
     public void ChangesideStream(float sideStream){
@@ -287,8 +317,8 @@ public class Player : MonoBehaviour
     }
     public void Continue(){
         this.isDead = false;
-        this.graphicsTrf.localPosition = Vector3.zero;
-        this.graphicsTrf.localRotation = Quaternion.identity;
+        this.graphicsTrf.localPosition = this.graphicsOffset;
+        this.graphicsTrf.rotation = Quaternion.identity;
         this.graphicsTrf.gameObject.SetActive(true);
         this.flyCount = 0;
         //周りを吹き飛ばす
@@ -327,10 +357,13 @@ public class Player : MonoBehaviour
         this.isJump = false;
         this.jumpSpeed = 0;
         //
-        this.graphicsTrf.localPosition = Vector3.zero;
-        this.graphicsTrf.localRotation = Quaternion.identity;
+        this.graphicsTrf.localPosition = this.graphicsOffset;
+        this.graphicsTrf.rotation = Quaternion.identity;
         this.graphicsTrf.gameObject.SetActive(true);
         this.flyCount = 0;
+        //
+        this.bodyTilt = 0;
+        this.befourBodyTilt = 0;
         //
         this.isShield = false;
         this.shieldCount = 0;

@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
     int continueDelay = 0;
     int ContinueDelay = 40 * 3;
     public Text continueDelayText;
-    int continueMoney = 3;
+    int continueMoney = 100;
 
     void Awake(){
         Instance = this;

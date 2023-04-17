@@ -73,7 +73,7 @@ public class CoinParent : MonoBehaviour
         {
             if(coin.isActive){
                 //マグネット吸引
-                if(this.isMagnet && !coin.isMagnet && !coin.isProtected){
+                if(this.isMagnet && !coin.isMagnet){
                     float distanceSqr = (playerPosition - coin.trf.position).sqrMagnitude;
                     if(distanceSqr <= this.magDistance * this.magDistance){
                         coin.isMagnet = true;
@@ -129,26 +129,9 @@ public class CoinParent : MonoBehaviour
                 coin.trf.position = position;
                 coin.trf.rotation = Quaternion.identity;
                 coin.isMagnet = false;
-                coin.isProtected = false;
                 break;
             }
         }
-    }
-    public Coin SetCoinReturn(Vector3 position)
-    {
-		foreach (var coin in this.coins)
-		{
-            if(!coin.isActive){
-                coin.isActive = true;
-                coin.obj.SetActive(true);
-                coin.blur.SetActive(true);
-                coin.trf.position = position;
-                coin.isMagnet = false;
-                coin.isProtected = false;
-                return coin;;
-            }
-        }
-        return null;
     }
 
     public void Magnet(bool isMagnet){
@@ -218,22 +201,10 @@ public class Coin{
     public GameObject blur;
     public float speed;
     public bool isMagnet;
-    public bool isProtected;
 
     public Coin(GameObject obj){
         this.obj = obj;
         this.trf = obj.transform;
         this.blur = this.trf.GetChild(1).gameObject;
-    }
-
-    public void Protect(){
-        this.isProtected = true;
-        this.blur.SetActive(false);
-    }
-
-    public void ProtectBreak(){
-        this.isProtected = false;
-        this.isMagnet = true;
-        this.blur.SetActive(true);
     }
 }

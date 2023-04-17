@@ -49,8 +49,6 @@ public class Obstacle : MonoBehaviour
         this.flyCount = 0;
     }
 
-    public virtual void Protect(Coin coin){}
-
     //プレイヤーと衝突
     public virtual void Fly(Vector3 flyVec){
         this.flyCount = this.FlyCount;

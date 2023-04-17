@@ -10,18 +10,25 @@ public class StageInfo
     public void SetManager(ObstacleManager manager){
         this.manager = manager;
         manager.stages = new Dictionary<int, UnityAction<float>[]>(){
+            // {1, new UnityAction<float>[]{BubbleSpawner3,}},
             {1, new UnityAction<float>[]{Mutual,}},
             {2, new UnityAction<float>[]{RightLeft,}},
             {3, new UnityAction<float>[]{Branch, Center, CenterBlock}},
-            {4, new UnityAction<float>[]{
-                Mutual, CenterBlock, RightLeft, Branch, Wall, Center,
+            {5, new UnityAction<float>[]{
+                Mutual, CenterBlock, RightLeft, Branch, Center,
                 Bubble, MoveBubble,
-                // BubbleSpawner
             }},
-            {12, new UnityAction<float>[]{
-                Mutual, CenterBlock, RightLeft, Branch, Wall, Center,
-                Bubble, MoveBubble, MoveObstacle, BubbleSpawner,
-                // BubbleSpawner
+            {7, new UnityAction<float>[]{
+                Mutual, CenterBlock, RightLeft, Branch, Center,
+                Bubble, MoveBubble, Upgrade, BubbleSpawner
+            }},
+            {24, new UnityAction<float>[]{
+                Mutual, CenterBlock, RightLeft, Branch, Center,
+                Bubble, MoveBubble, Wall, BubbleSpawner3,
+            }},
+            {30, new UnityAction<float>[]{
+                Mutual, CenterBlock, RightLeft, Branch, Center,
+                BubbleLv2, MoveBubbleLv2, Wall, BubbleSpawner3, MoveObstacle,
             }},
         };
     }
@@ -58,7 +65,7 @@ public class StageInfo
         }
 
         //コイン
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 9; i++)
         {
             CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * i));
         }
@@ -68,17 +75,22 @@ public class StageInfo
         for (int i = 0; i < 3; i++)
         {
             manager.SetObstacle(new Vector3(0, 0, offsetZ + 30 * (1 + i)), 0);
+
+            manager.SetObstacle(new Vector3(9, 0, offsetZ + 30 * (1 + i)), 0);
+            manager.SetObstacle(new Vector3(-9, 0, offsetZ + 30 * (1 + i)), 0);
         }
         for (int i = 0; i < 3; i++)
         {
-            manager.SetObstacle(new Vector3(5, 0, offsetZ + 15 + 30 * i), 0);
-            manager.SetObstacle(new Vector3(-5, 0, offsetZ + 15 + 30 * i), 0);
+            manager.SetObstacle(new Vector3(4.5f, 0, offsetZ + 15 + 30 * i), 0);
+            manager.SetObstacle(new Vector3(-4.5f, 0, offsetZ + 15 + 30 * i), 0);
         }
 
         //コイン
         for (int i = 0; i < 10; i++)
         {
-            CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * i));
+            if(i % 3 != 0){
+                CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * i));
+            }
         }
     }
 
@@ -88,6 +100,7 @@ public class StageInfo
             manager.SetObstacle(new Vector3(0, 0, offsetZ + 10 * (1 + i)), 0);
             manager.SetObstacle(new Vector3(-3, 0, offsetZ + 10 * (1 + i)), 0);
             manager.SetObstacle(new Vector3(-6, 0, offsetZ + 10 * (1 + i)), 0);
+            manager.SetObstacle(new Vector3(-9, 0, offsetZ + 10 * (1 + i)), 0);
             CoinParent.Instance.SetCoin(new Vector3(8, 0, offsetZ + 10 * (1 + i)));
         }
         for (int i = 6; i < 10; i++)
@@ -95,6 +108,8 @@ public class StageInfo
             manager.SetObstacle(new Vector3(0, 0, offsetZ + 10 * (1 + i)), 0);
             manager.SetObstacle(new Vector3(3, 0, offsetZ + 10 * (1 + i)), 0);
             manager.SetObstacle(new Vector3(6, 0, offsetZ + 10 * (1 + i)), 0);
+            manager.SetObstacle(new Vector3(9, 0, offsetZ + 10 * (1 + i)), 0);
+            CoinParent.Instance.SetCoin(new Vector3(-8, 0, offsetZ + 10 * (1 + i)));
         }
     }
 
@@ -114,55 +129,77 @@ public class StageInfo
             manager.SetObstacle(new Vector3(0, 0, offsetZ + 10 * (1 + i)), 0);
             manager.SetObstacle(new Vector3(-2, 0, offsetZ + 10 * (1 + i)), 0);
             manager.SetObstacle(new Vector3(2, 0, offsetZ + 10 * (1 + i)), 0);
+            CoinParent.Instance.SetCoin(new Vector3(8, 0, offsetZ + 10 * (1 + i)));
+            CoinParent.Instance.SetCoin(new Vector3(-8, 0, offsetZ + 10 * (1 + i)));
         }
     }
 
     public void Wall(float offsetZ){
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 3; i++)
         {
-            manager.SetObstacle(new Vector3(-8 + 4 * i, 0, offsetZ + 90f), 0);
+            manager.SetObstacle(new Vector3(1 + 4 * i, 0, offsetZ + 90f), 0);
+            manager.SetObstacle(new Vector3(-1 - 4 * i, 0, offsetZ + 90f), 0);
         }
         //強化アイテム
-        var upgradeX = Random.Range(0, 4);
+        var upgradeX1 = Random.Range(0, 4);
+        var upgradeX2 = (upgradeX1 + 1 + Random.Range(0, 3)) % 4;
         for (int i = 0; i < 4; i++)
         {
-            var pos = new Vector3(-6 + 4 * i, 0, offsetZ + 90f);
-            if(upgradeX == i){
+            var x = (i < 2) ? (3 + 4 * i) : (-3 - 4 * (i-2));
+            var pos = new Vector3(x, 0, offsetZ + 90f);
+            if(upgradeX1 == i){
                 manager.SetObstacle(pos, 1);
-                if(Random.value < 0.5f){
-                    UpgradeItem.Instance.SetItem(pos);
-                }else{
-                    SupportItem.Instance.SetItemRandom(pos);
-                }
+                UpgradeItem.Instance.SetItem(pos);
+            }else if(upgradeX2 == i){
+                manager.SetObstacle(pos, 1);
+                SupportItem.Instance.SetItemRandom(pos);
             }else{
                 manager.SetObstacle(pos, 0);
             }
         }
 
         //コイン
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 9; i++)
         {
             CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * i));
         }
     }
 
     public void Center(float offsetZ){
-        for (int i = 0; i < 5; i++)
+        for (int i = 1; i < 9; i++)
         {
-            manager.SetObstacle(new Vector3(3, 0, offsetZ + 20 * (1 + i)), 2);
-            manager.SetObstacle(new Vector3(-3, 0, offsetZ + 20 * (1 + i)), 2);
+            manager.SetObstacle(new Vector3(3, 0, offsetZ + 10 * (1 + i)), 2);
+            manager.SetObstacle(new Vector3(-3, 0, offsetZ + 10 * (1 + i)), 2);
         }
+        manager.SetObstacle(new Vector3(6, 0, offsetZ + 20), 2);
+        manager.SetObstacle(new Vector3(-6, 0, offsetZ + 20), 2);
+        manager.SetObstacle(new Vector3(9, 0, offsetZ + 20), 2);
+        manager.SetObstacle(new Vector3(-9, 0, offsetZ + 20), 2);
     }
 
+    float[] BubblePos = new float[]{0, 1f, 2f, 3.5f, 5f, 8f};
     public void Bubble(float offsetZ){
         for (int i = 3; i < 8; i++)
         {
-            for (int j = 0; j < 3; j++)
+            for (int j = 0; j < this.BubblePos.Length - 1; j++)
             {
-                var pos = new Vector3(-3 + 3 * j, 0, offsetZ + 10 * (1 + i));
-                var coin = CoinParent.Instance.SetCoinReturn(pos);
-                manager.SetObstacle(pos, 3, coin);
+                manager.SetObstacle(new Vector3(this.BubblePos[j] + Random.Range(-0.7f, 0.7f), 0, offsetZ + 10 * (1 + i)), 3);
+                manager.SetObstacle(new Vector3(-this.BubblePos[j] + Random.Range(-0.7f, 0.7f), 0, offsetZ + 10 * (1 + i)), 3);
             }
+            CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * (1 + i)));
+            CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * (1 + i) + 5));
+        }
+    }
+    public void BubbleLv2(float offsetZ){
+        for (int i = 3; i < 8; i++)
+        {
+            for (int j = 0; j < this.BubblePos.Length; j++)
+            {
+                manager.SetObstacle(new Vector3(this.BubblePos[j] + Random.Range(-0.7f, 0.7f), 0, offsetZ + 10 * (1 + i)), 3);
+                manager.SetObstacle(new Vector3(-this.BubblePos[j] + Random.Range(-0.7f, 0.7f), 0, offsetZ + 10 * (1 + i)), 3);
+            }
+            CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * (1 + i)));
+            CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * (1 + i) + 5));
         }
     }
 
@@ -172,22 +209,41 @@ public class StageInfo
             manager.SetObstacle(new Vector3(10, 0, offsetZ + 5 * (1 + i)), 4);
         }
     }
+    public void MoveBubbleLv2(float offsetZ){
+        for (int i = 3; i < 16; i++)
+        {
+            manager.SetObstacle(new Vector3(10, 0, offsetZ + 5 * (1 + i)), 4);
+            manager.SetObstacle(new Vector3(10, 0, offsetZ + 5 * (1 + i)), 4);
+        }
+    }
 
     public void MoveObstacle(float offsetZ){
-        manager.SetObstacle(new Vector3(Random.Range(-5f, 5f), 0, offsetZ + 80), 7);
+        var x = (Random.value < 0.5f ? 1f : -1f) * Random.Range(4f, 8f);
+        manager.SetObstacle(new Vector3(x, 0, offsetZ + 80), 7);
         
-        manager.SetObstacle(new Vector3(0, 0, offsetZ + 90), 5);
-        manager.SetObstacle(new Vector3(0, 0, offsetZ + 90), 6);
-        manager.SetObstacle(new Vector3(-10, 0, offsetZ + 90), 5);
-        manager.SetObstacle(new Vector3(10, 0, offsetZ + 90), 6);
+        manager.SetObstacle(new Vector3(0.5f, 0, offsetZ + 90), 5);
+        manager.SetObstacle(new Vector3(-0.5f, 0, offsetZ + 90), 6);
+        manager.SetObstacle(new Vector3(-9.5f, 0, offsetZ + 90), 5);
+        manager.SetObstacle(new Vector3(9.5f, 0, offsetZ + 90), 6);
 
-        manager.SetObstacle(new Vector3(5, 0, offsetZ + 100), 5);
-        manager.SetObstacle(new Vector3(5, 0, offsetZ + 100), 6);
-        manager.SetObstacle(new Vector3(-5, 0, offsetZ + 100), 5);
-        manager.SetObstacle(new Vector3(-5, 0, offsetZ + 100), 6);
+        manager.SetObstacle(new Vector3(5.5f, 0, offsetZ + 100), 5);
+        manager.SetObstacle(new Vector3(4.5f, 0, offsetZ + 100), 6);
+        manager.SetObstacle(new Vector3(-4.5f, 0, offsetZ + 100), 5);
+        manager.SetObstacle(new Vector3(-5.5f, 0, offsetZ + 100), 6);
+
+        //コイン
+        for (int i = 0; i < 7; i++)
+        {
+            CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * i));
+        }
     }
 
     public void BubbleSpawner(float offsetZ){
         manager.SetObstacle(new Vector3(9, 0, offsetZ + 90), 8);
+    }
+    public void BubbleSpawner3(float offsetZ){
+        manager.SetObstacle(new Vector3(9, 0, offsetZ + 90), 8);
+        manager.SetObstacle(new Vector3(9, 0, offsetZ + 70), 8);
+        manager.SetObstacle(new Vector3(9, 0, offsetZ + 50), 8);
     }
 }

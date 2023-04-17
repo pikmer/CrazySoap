@@ -15,6 +15,7 @@ public class MoveObstacle : Obstacle
     public override void Init(Vector3 position){
         base.Init(position);
         this.referenceX = position.x;
+        this.moveCount = 0;
     }
 
     protected override void EachUpdate()
