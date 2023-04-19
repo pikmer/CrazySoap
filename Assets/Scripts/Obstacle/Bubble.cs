@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class Bubble : HealthObstacle
 {
+    [SerializeField]
+    int score = 5;
 
     public override void Damage(int damage){
         this.HP -= damage;
         if(this.HP <= 0){
             this.SetActive(false);
             BubbleEffect.Instance.Play(this.transform.position + this.center);
+            //スコア
+            Player.Instance.ItemScore(score, 1);
         }else if(this.isHPbar){
             var size = this.HPbar.localScale;
             this.HPbar.localScale = new Vector3((float)this.HP / (float)this.MaxHP, size.y, size.z);

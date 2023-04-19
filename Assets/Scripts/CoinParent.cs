@@ -115,7 +115,7 @@ public class CoinParent : MonoBehaviour
         this.money += 1 * coef;
         this.moneyText.text = this.money.ToString();
         //スコア
-        Player.Instance.ItemScore(10 * coef);
+        Player.Instance.ItemScore(10 * coef, 0);
     }
 
     public void SetCoin(Vector3 position)

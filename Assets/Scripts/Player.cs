@@ -81,6 +81,11 @@ public class Player : MonoBehaviour
     int itemScore;
     int score;
     public Text scoreText;
+    public Text scorePlusText;
+    int scorePlusCount;
+    int ScorePlusCount = 40;
+    public Color scorePlusColorCoin;
+    public Color scorePlusColorBubble;
     
     void Awake()
     {
@@ -276,6 +281,17 @@ public class Player : MonoBehaviour
                 }
             }
         }
+
+        if(this.scorePlusCount > 0){
+            this.scorePlusCount--;
+            if(this.scorePlusCount >= this.ScorePlusCount - 5){
+                var value = this.scorePlusCount - this.ScorePlusCount + 5;
+                this.scorePlusText.transform.localScale = Vector3.one * (1f + (float)value / 5f);
+            }
+            if(this.scorePlusCount < 5){
+                this.scorePlusText.transform.localScale = Vector3.one * (float)this.scorePlusCount / 5f;
+            }
+        }
     }
 
     public void Jump(){
@@ -290,10 +306,18 @@ public class Player : MonoBehaviour
 
     //スコア計算
     int GetScore(){
-        return (this.posResetMil + (int)transform.position.z) / 2 + this.itemScore;
+        return (this.posResetMil + (int)transform.position.z) / 4 + this.itemScore;
     }
-    public void ItemScore(int score){
+    public void ItemScore(int score, int colorIndex){
         this.itemScore += score;
+        this.scorePlusText.text = "+" + score;
+        this.scorePlusCount = this.ScorePlusCount;
+
+        if(colorIndex == 0){
+            this.scorePlusText.color = this.scorePlusColorCoin;
+        }else if(colorIndex == 1){
+            this.scorePlusText.color = this.scorePlusColorBubble;
+        }
     }
 
     //ウィングマン
@@ -321,6 +345,7 @@ public class Player : MonoBehaviour
         this.graphicsTrf.rotation = Quaternion.identity;
         this.graphicsTrf.gameObject.SetActive(true);
         this.flyCount = 0;
+        BubbleBombEffect.Instance.Play(this.transform.position);
         //周りを吹き飛ばす
         var position = this.transform.position;
         var size = new Vector3(15f, 10f, 70f);
@@ -376,5 +401,7 @@ public class Player : MonoBehaviour
         this.posResetMil = 0;
         this.itemScore = 0;
         this.score = 0;
+        this.scoreText.text = "0";
+        this.scorePlusText.text = "";
     }
 }

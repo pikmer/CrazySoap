@@ -10,7 +10,7 @@ public class StageInfo
     public void SetManager(ObstacleManager manager){
         this.manager = manager;
         manager.stages = new Dictionary<int, UnityAction<float>[]>(){
-            // {1, new UnityAction<float>[]{BubbleSpawner3,}},
+            // {1, new UnityAction<float>[]{MoveObstacle,}},
             {1, new UnityAction<float>[]{Mutual,}},
             {2, new UnityAction<float>[]{RightLeft,}},
             {3, new UnityAction<float>[]{Branch, Center, CenterBlock}},
@@ -65,9 +65,9 @@ public class StageInfo
         }
 
         //コイン
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < 8; i++)
         {
-            CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * i));
+            CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * (1 + i)));
         }
     }
 
@@ -159,9 +159,9 @@ public class StageInfo
         }
 
         //コイン
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < 8; i++)
         {
-            CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * i));
+            CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * (1 + i)));
         }
     }
 
@@ -232,9 +232,9 @@ public class StageInfo
         manager.SetObstacle(new Vector3(-5.5f, 0, offsetZ + 100), 6);
 
         //コイン
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < 6; i++)
         {
-            CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * i));
+            CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * (1 + i)));
         }
     }
 
