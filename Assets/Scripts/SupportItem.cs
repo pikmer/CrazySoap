@@ -118,7 +118,7 @@ public class SupportItem : MonoBehaviour
     {
         this.SetItem(position, Random.Range(0, this.meshes.Length));
     }
-    public void SetItemRandomAir(Vector3 position)
+    public void SetItemRandomJumpNone(Vector3 position)
     {
         this.SetItem(position, Random.Range(0, this.meshes.Length - 1));
     }

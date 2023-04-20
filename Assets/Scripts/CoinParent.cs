@@ -7,8 +7,8 @@ public class CoinParent : MonoBehaviour
 {
     public static CoinParent Instance;
     
-    [HideInInspector][System.NonSerialized]
-    public int money;
+    [HideInInspector]
+    public int money { get; private set;}
     public Text moneyText;
     public Image icon;
 
@@ -31,6 +31,9 @@ public class CoinParent : MonoBehaviour
     int notEnoughCount = 0;
     public Color normalColor;
     public Color notEnoughColor;
+
+    int animCount;
+    int AnimCount = 5;
 
     void Awake()
     {
@@ -61,6 +64,11 @@ public class CoinParent : MonoBehaviour
                 this.moneyText.color = this.normalColor;
                 this.icon.color = Color.white;
             }
+        }
+
+        if(this.animCount > 0){
+            this.animCount--;
+            this.moneyText.transform.localScale = Vector3.one * (1f + (float)this.animCount / 10f);
         }
         
         if(Player.Instance.isDead) return;
@@ -115,7 +123,10 @@ public class CoinParent : MonoBehaviour
         this.money += 1 * coef;
         this.moneyText.text = this.money.ToString();
         //スコア
-        Player.Instance.ItemScore(10 * coef, 0);
+        ScoreManager.Instance.ItemScore(10 * coef, 0);
+
+        this.animCount = this.AnimCount;
+        AudioManager.Instance.PlaySE(1);
     }
 
     public void SetCoin(Vector3 position)

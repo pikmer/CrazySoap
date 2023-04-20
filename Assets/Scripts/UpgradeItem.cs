@@ -71,7 +71,7 @@ public class UpgradeItem : MonoBehaviour
     public void SetItem(Vector3 position)
     {
         if(Weapon.Instance.CheckMaxLevel()){
-            SupportItem.Instance.SetItemRandomAir(position);
+            SupportItem.Instance.SetItemRandomJumpNone(position);
         }else{
             foreach (var item in this.items)
             {

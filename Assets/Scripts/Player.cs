@@ -74,18 +74,8 @@ public class Player : MonoBehaviour
     public Image shieldImage;
     public Sprite shieldSprite;
     public Sprite watchSprite;
-    int shieldUseCount = 3;
-
-    //スコア
-    int posResetMil;
-    int itemScore;
-    int score;
-    public Text scoreText;
-    public Text scorePlusText;
-    int scorePlusCount;
-    int ScorePlusCount = 40;
-    public Color scorePlusColorCoin;
-    public Color scorePlusColorBubble;
+    public int shieldUseCount { get; private set;}
+    string shieldUseCountKey = "shield";
     
     void Awake()
     {
@@ -96,6 +86,8 @@ public class Player : MonoBehaviour
         this.shieldText.text = this.shieldUseCount.ToString();
 
         this.transform.position = this.startPos;
+
+        this.shieldUseCount = PlayerPrefs.GetInt(this.shieldUseCountKey, 3);
     }
 
     void Update(){
@@ -104,7 +96,7 @@ public class Player : MonoBehaviour
             this.shieldCount = this.ShieldCount;
             this.shieldObj.SetActive(true);
 
-            this.shieldUseCount--;
+            this.ShieldCountSet(-1);
             this.shieldText.text = this.shieldUseCount.ToString();
         }
         //ジャンプ仮
@@ -239,9 +231,6 @@ public class Player : MonoBehaviour
             //
             this.moveDirection = Vector3.zero;
 
-            //スコア表示更新
-            this.scoreText.text = this.GetScore().ToString();
-
             //攻撃実行
             this.attackInterval++;
             if(!this.isJump && this.attackInterval >= this.AttackInterval){
@@ -281,17 +270,6 @@ public class Player : MonoBehaviour
                 }
             }
         }
-
-        if(this.scorePlusCount > 0){
-            this.scorePlusCount--;
-            if(this.scorePlusCount >= this.ScorePlusCount - 5){
-                var value = this.scorePlusCount - this.ScorePlusCount + 5;
-                this.scorePlusText.transform.localScale = Vector3.one * (1f + (float)value / 5f);
-            }
-            if(this.scorePlusCount < 5){
-                this.scorePlusText.transform.localScale = Vector3.one * (float)this.scorePlusCount / 5f;
-            }
-        }
     }
 
     public void Jump(){
@@ -304,36 +282,25 @@ public class Player : MonoBehaviour
         this.sideStream = sideStream;
     }
 
-    //スコア計算
-    int GetScore(){
-        return (this.posResetMil + (int)transform.position.z) / 4 + this.itemScore;
-    }
-    public void ItemScore(int score, int colorIndex){
-        this.itemScore += score;
-        this.scorePlusText.text = "+" + score;
-        this.scorePlusCount = this.ScorePlusCount;
-
-        if(colorIndex == 0){
-            this.scorePlusText.color = this.scorePlusColorCoin;
-        }else if(colorIndex == 1){
-            this.scorePlusText.color = this.scorePlusColorBubble;
-        }
-    }
-
     //ウィングマン
     public void Wingman(bool isWingman){
         this.isWingman = isWingman;
         this.wingmanObj.SetActive(isWingman);
     }
 
+    public void ShieldCountSet(int plus){
+        if(this.shieldUseCount + plus < 0) return;
+        this.shieldUseCount += plus;
+        PlayerPrefs.SetInt(this.shieldUseCountKey, this.shieldUseCount);
+    }
+
     public void PositionReset(){
         this.transform.position -= Vector3.forward * this.positionResetRange;
-        this.posResetMil += (int)this.positionResetRange;
     }
 
     public void GameStart(){
         this.isDead = false;
-        this.scoreText.text = "";
+        this.shieldText.text = this.shieldUseCount.ToString();
     }
 
     public void PlayerKilled(){
@@ -397,11 +364,5 @@ public class Player : MonoBehaviour
         this.shieldText.text = this.shieldUseCount.ToString();
         this.shieldText.color = Color.white;
         this.shieldImage.sprite = this.shieldSprite;
-        //スコア関係
-        this.posResetMil = 0;
-        this.itemScore = 0;
-        this.score = 0;
-        this.scoreText.text = "0";
-        this.scorePlusText.text = "";
     }
 }

@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
 
     public GameObject titleUI;
+    public GameObject gameUI;
     public GameObject continueUI;
     public GameObject gameoverUI;
 
@@ -19,6 +20,7 @@ public class UIManager : MonoBehaviour
 
     public void GameStart(){
         this.titleUI.SetActive(false);
+        this.gameUI.SetActive(true);
     }
 
     public void ContinueCheck(){
@@ -37,5 +39,6 @@ public class UIManager : MonoBehaviour
     public void Retry(){
         this.titleUI.SetActive(true);
         this.gameoverUI.SetActive(false);
+        this.gameUI.SetActive(false);
     }
 }

@@ -69,6 +69,7 @@ public class GameManager : MonoBehaviour
         Fog.Instance.PositionReset();
         BubbleEffect.Instance.PositionReset();
         BubbleBombEffect.Instance.PositionReset();
+        ScoreManager.Instance.PositionReset();
     }
 
     public void GameStart(){
@@ -76,6 +77,7 @@ public class GameManager : MonoBehaviour
         Player.Instance.GameStart();
         UIManager.Instance.GameStart();
         ObstacleManager.Instance.GameStart();
+        ScoreManager.Instance.GameStart();
     }
 
     public void PlayerKilled(){
@@ -105,6 +107,7 @@ public class GameManager : MonoBehaviour
     public void GameOver(){
         this.isGame = false;
         UIManager.Instance.GameOver();
+        ScoreManager.Instance.GameOver();
     }
 
     public void Retry(){
@@ -116,6 +119,7 @@ public class GameManager : MonoBehaviour
         SupportItem.Instance.Retry();
         CoinParent.Instance.Retry();
         Fog.Instance.Retry();
+        ScoreManager.Instance.Retry();
     }
 
     //回転してないボックス同士の判定

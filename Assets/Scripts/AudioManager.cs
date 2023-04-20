@@ -16,12 +16,17 @@ public class AudioManager : MonoBehaviour
 
     public AudioSource audioSource;
 
-    public Slider slider;
+    [SerializeField] Slider slider;
 
-    public GameObject sliderUiObj;
+    [SerializeField] GameObject sliderUiObj;
 
     //セーブ関係
     string saveAudioVolumeKey = "AudioVolume";
+
+    //UI関係
+    bool isUiOver;
+    int uiOverCount;
+    [SerializeField] RectTransform sliderTrf;
 
     void Awake()
     {
@@ -45,10 +50,10 @@ public class AudioManager : MonoBehaviour
         this.audioPlayList = new bool[this.seList.Length];
         this.audioInterval = new int[this.seList.Length];
 
-        // this.slider.value = this.audioSource.volume;
+        this.slider.value = this.audioSource.volume;
+        this.sliderTrf.anchoredPosition3D += Vector3.right * 205f;
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         for (int i = 0; i < this.audioPlayList.Length; i++)
@@ -63,6 +68,22 @@ public class AudioManager : MonoBehaviour
                 this.audioInterval[i]--;
             }
         }
+
+        if(this.isUiOver){
+            if(this.sliderTrf.anchoredPosition3D.x > 0){
+                this.sliderTrf.anchoredPosition3D += Vector3.left * 15f;
+                if(this.sliderTrf.anchoredPosition3D.x < 0){
+                    this.sliderTrf.anchoredPosition3D += Vector3.zero;
+                }
+            }
+        }else{
+            if(this.sliderTrf.anchoredPosition3D.x < 205f){
+                this.sliderTrf.anchoredPosition3D += Vector3.right * 15f;
+                if(this.sliderTrf.anchoredPosition3D.x > 205f){
+                    this.sliderTrf.anchoredPosition3D += Vector3.right * 205f;
+                }
+            }
+        }
     }
 
     public void PlaySE(int index)
@@ -71,12 +92,16 @@ public class AudioManager : MonoBehaviour
     }
 
     //音量
-    public void VolumeSet(){
+    public void VolumeChange(){
         if(Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer) return;
         this.audioSource.volume = this.slider.value;
     }
-    public void VolumeCheck(){
+    public void VolumeSet(){
         // AudioManager.Instance.PlaySE(7);
         PlayerPrefs.SetFloat(this.saveAudioVolumeKey, this.audioSource.volume);
+    }
+
+    public void UiOver(bool value){
+        this.isUiOver = value;
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 
 public class ObstacleManager : MonoBehaviour
@@ -16,6 +17,7 @@ public class ObstacleManager : MonoBehaviour
     int wave = 1;
     int waveTime = 0;
     int WaveTime = 20 * 60;
+    [SerializeField] Text waveText;
 
     StageInfo stageInfo = new StageInfo();
 
@@ -100,6 +102,7 @@ public class ObstacleManager : MonoBehaviour
         if(this.waveTime >= this.WaveTime){
             this.wave++;
             this.waveTime = 0;
+            this.waveText.text = "level\u00A0" + this.wave;
         }
         //水流変更 2インナーウェーブ前
         if((this.waveTime + this.WaveTime / 3) % (this.WaveTime / 2) == 0){
@@ -207,6 +210,7 @@ public class ObstacleManager : MonoBehaviour
         this.SetStage(1);
         this.SetStage(2);
         UpgradeItem.Instance.SetStartItem(new Vector3(0, 0, 50));
+        this.waveText.text = "level 1";
     }
 
     public void Retry(){
@@ -252,7 +256,7 @@ public class ObstacleManager : MonoBehaviour
         itemPos.x = Random.value < 0.5f ? 5f : -5f;
         UpgradeItem.Instance.SetItem(itemPos);
         itemPos.x *= -1f;
-        SupportItem.Instance.SetItemRandomAir(itemPos);
+        SupportItem.Instance.SetItemRandomJumpNone(itemPos);
     }
     float Drop(int frame){
         float temp = 0;

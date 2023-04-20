@@ -13,7 +13,7 @@ public class Bubble : HealthObstacle
             this.SetActive(false);
             BubbleEffect.Instance.Play(this.transform.position + this.center);
             //スコア
-            Player.Instance.ItemScore(score, 1);
+            ScoreManager.Instance.ItemScore(score, 1);
         }else if(this.isHPbar){
             var size = this.HPbar.localScale;
             this.HPbar.localScale = new Vector3((float)this.HP / (float)this.MaxHP, size.y, size.z);

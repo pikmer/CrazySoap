@@ -10,7 +10,8 @@ public class StageInfo
     public void SetManager(ObstacleManager manager){
         this.manager = manager;
         manager.stages = new Dictionary<int, UnityAction<float>[]>(){
-            // {1, new UnityAction<float>[]{MoveObstacle,}},
+            // {1, new UnityAction<float>[]{MoveDuck,}},
+
             {1, new UnityAction<float>[]{Mutual,}},
             {2, new UnityAction<float>[]{RightLeft,}},
             {3, new UnityAction<float>[]{Branch, Center, CenterBlock}},
@@ -18,14 +19,24 @@ public class StageInfo
                 Mutual, CenterBlock, RightLeft, Branch, Center,
                 Bubble, MoveBubble,
             }},
+
             {7, new UnityAction<float>[]{
                 Mutual, CenterBlock, RightLeft, Branch, Center,
                 Bubble, MoveBubble, Upgrade, BubbleSpawner
             }},
+
+            {16, new UnityAction<float>[]{UpgradeJump,}},
+
+            {17, new UnityAction<float>[]{
+                Mutual, CenterBlock, RightLeft, Branch, Center,
+                Bubble, MoveBubble, Upgrade, BubbleSpawner
+            }},
+
             {24, new UnityAction<float>[]{
                 Mutual, CenterBlock, RightLeft, Branch, Center,
                 Bubble, MoveBubble, Wall, BubbleSpawner3,
             }},
+
             {30, new UnityAction<float>[]{
                 Mutual, CenterBlock, RightLeft, Branch, Center,
                 BubbleLv2, MoveBubbleLv2, Wall, BubbleSpawner3, MoveObstacle,
@@ -51,18 +62,32 @@ public class StageInfo
         {
             manager.SetObstacle(new Vector3(-8 + 4 * i, 0, offsetZ + 90f), 0);
         }
-        // for (int i = 0; i < 4; i++)
-        // {
-        //     manager.SetObstacle(new Vector3(-6 + 4 * i, 0, offsetZ + 70f), 0);
-        // }
         //強化アイテム
         var upgradePos = new Vector3(-6 + 4 * Random.Range(0, 4), 0, offsetZ + 90f);
         manager.SetObstacle(upgradePos, 1);
         if(Random.value < 0.5f){
             UpgradeItem.Instance.SetItem(upgradePos);
         }else{
-            SupportItem.Instance.SetItemRandom(upgradePos);
+            SupportItem.Instance.SetItemRandomJumpNone(upgradePos);
         }
+
+        //コイン
+        for (int i = 0; i < 8; i++)
+        {
+            CoinParent.Instance.SetCoin(new Vector3(0, 0, offsetZ + 10 * (1 + i)));
+        }
+    }
+
+    public void UpgradeJump(float offsetZ)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            manager.SetObstacle(new Vector3(-8 + 4 * i, 0, offsetZ + 90f), 0);
+        }
+        //強化アイテム
+        var upgradePos = new Vector3(-6 + 4 * Random.Range(0, 4), 0, offsetZ + 90f);
+        manager.SetObstacle(upgradePos, 1);
+        SupportItem.Instance.SetItem(upgradePos, 3);
 
         //コイン
         for (int i = 0; i < 8; i++)
@@ -245,5 +270,13 @@ public class StageInfo
         manager.SetObstacle(new Vector3(9, 0, offsetZ + 90), 8);
         manager.SetObstacle(new Vector3(9, 0, offsetZ + 70), 8);
         manager.SetObstacle(new Vector3(9, 0, offsetZ + 50), 8);
+    }
+
+    public void MoveDuck(float offsetZ){
+        
+        for (int i = 3; i < 16; i++)
+        {
+            manager.SetObstacle(new Vector3(-9.25f, 0, offsetZ + 5 * (1 + i)), 10);
+        }
     }
 }
