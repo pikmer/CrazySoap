@@ -10,7 +10,7 @@ public class StageInfo
     public void SetManager(ObstacleManager manager){
         this.manager = manager;
         manager.stages = new Dictionary<int, UnityAction<float>[]>(){
-            // {1, new UnityAction<float>[]{MoveDuck,}},
+            // {1, new UnityAction<float>[]{MoveDuckBlack,}},
 
             {1, new UnityAction<float>[]{Mutual,}},
             {2, new UnityAction<float>[]{RightLeft,}},
@@ -278,5 +278,33 @@ public class StageInfo
         {
             manager.SetObstacle(new Vector3(-9.25f, 0, offsetZ + 5 * (1 + i)), 10);
         }
+    }
+    public void MoveDuckBlack(float offsetZ){
+        
+        // for (int i = 3; i < 16; i++)
+        // {
+        //     var x = Random.Range( -9.25f, 5.25f);
+        //     manager.SetObstacle(new Vector3(x, 0, offsetZ + 5 * (1 + i)), 11);
+        // }
+        
+        manager.SetObstacle(new Vector3(0.5f, 0, offsetZ + 40), 11);
+        manager.SetObstacle(new Vector3(-0.5f, 0, offsetZ + 40), 12);
+        manager.SetObstacle(new Vector3(-9.5f, 0, offsetZ + 40), 11);
+        manager.SetObstacle(new Vector3(9.5f, 0, offsetZ + 40), 12);
+
+        manager.SetObstacle(new Vector3(5.5f, 0, offsetZ + 60), 11);
+        manager.SetObstacle(new Vector3(4.5f, 0, offsetZ + 60), 12);
+        manager.SetObstacle(new Vector3(-4.5f, 0, offsetZ + 60), 11);
+        manager.SetObstacle(new Vector3(-5.5f, 0, offsetZ + 60), 12);
+        
+        manager.SetObstacle(new Vector3(0.5f, 0, offsetZ + 80), 11);
+        manager.SetObstacle(new Vector3(-0.5f, 0, offsetZ + 80), 12);
+        manager.SetObstacle(new Vector3(-9.5f, 0, offsetZ + 80), 11);
+        manager.SetObstacle(new Vector3(9.5f, 0, offsetZ + 80), 12);
+
+        manager.SetObstacle(new Vector3(5.5f, 0, offsetZ + 100), 11);
+        manager.SetObstacle(new Vector3(4.5f, 0, offsetZ + 100), 12);
+        manager.SetObstacle(new Vector3(-4.5f, 0, offsetZ + 100), 11);
+        manager.SetObstacle(new Vector3(-5.5f, 0, offsetZ + 100), 12);
     }
 }

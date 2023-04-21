@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveDuck : Obstacle
+public class MoveDuckRotate : Obstacle
 {
     float referenceX;
 
@@ -11,15 +11,14 @@ public class MoveDuck : Obstacle
 
     public float moveDistance;
 
-    [SerializeField] int MaxMoveCount = 60;
-    [SerializeField] int MinMoveCount = 60;
+    // [SerializeField] int MaxMoveCount = 60;
+    // [SerializeField] int MinMoveCount = 60;
 
     public override void Init(Vector3 position){
         base.Init(position);
         this.referenceX = position.x;
         this.moveCount = 0;
-        this.MoveCount = Random.Range(MinMoveCount, MaxMoveCount);
-        this.graphics.transform.rotation = Quaternion.Euler(0, 90, 0);
+        // this.MoveCount = Random.Range(MinMoveCount, MaxMoveCount);
     }
 
     protected override void EachUpdate()
@@ -29,9 +28,7 @@ public class MoveDuck : Obstacle
         this.moveCount++;
         if(this.moveCount >= this.MoveCount * 2){
             this.moveCount = 0;
-            this.graphics.transform.rotation = Quaternion.Euler(0, 90, 0);
         }else if(this.moveCount == this.MoveCount){
-            this.graphics.transform.rotation = Quaternion.Euler(0, -90, 0);
         }
 
         float move = 0;
@@ -44,5 +41,7 @@ public class MoveDuck : Obstacle
         var point = this.transform.position;
         point.x = referenceX + move;
         this.transform.position = point;
+        
+        this.graphics.transform.Rotate(0, 10, 0);
     }
 }

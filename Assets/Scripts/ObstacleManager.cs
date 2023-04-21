@@ -153,6 +153,23 @@ public class ObstacleManager : MonoBehaviour
                 this.stageInfo.Wall(playerPosZ + 100 * z);
             }
         }
+        //難しwave
+        else if(this.innerWave == 59){
+            this.stageInfo.MoveDuck(playerPosZ + 100 * z);
+        }
+        else if(this.innerWave == 95){
+            this.stageInfo.MoveDuckBlack(playerPosZ + 100 * z);
+        }
+        else if(this.innerWave > 59 && this.innerWave < 95 && this.innerWave % 6 == 5 && Random.value < 0.5f){
+            this.stageInfo.MoveDuck(playerPosZ + 100 * z);
+        }
+        else if(this.innerWave > 95 && this.innerWave % 6 == 5){
+            if(Random.value < 0.5f){
+                this.stageInfo.MoveDuck(playerPosZ + 100 * z);
+            }else{
+                this.stageInfo.MoveDuckBlack(playerPosZ + 100 * z);
+            }
+        }
         //ランダムセット
         else{
             this.nowStages[Random.Range(0, this.nowStages.Length)](playerPosZ + 100 * z);

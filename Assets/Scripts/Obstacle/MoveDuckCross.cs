@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveDuck : Obstacle
+public class MoveDuckCross : Obstacle
 {
     float referenceX;
 
@@ -10,6 +10,8 @@ public class MoveDuck : Obstacle
     public int MoveCount = 60;
 
     public float moveDistance;
+    
+    public float moveZ;
 
     [SerializeField] int MaxMoveCount = 60;
     [SerializeField] int MinMoveCount = 60;
@@ -35,14 +37,18 @@ public class MoveDuck : Obstacle
         }
 
         float move = 0;
+        float moveZ = 0;
         if(this.moveCount < this.MoveCount){
             move = moveDistance * ((float)this.moveCount / (float)this.MoveCount);
+            moveZ = -this.moveZ;
         }else{
             move = moveDistance * (1f - ((float)(this.moveCount - this.MoveCount) / (float)this.MoveCount));
+            moveZ = this.moveZ;
         }
 
         var point = this.transform.position;
         point.x = referenceX + move;
+        point.z += moveZ;
         this.transform.position = point;
     }
 }
