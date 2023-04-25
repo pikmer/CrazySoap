@@ -20,7 +20,6 @@ public class MoveObstacle : Obstacle
 
     protected override void EachUpdate()
     {
-        // base.FixedUpdate();
         if(!this.isActive && this.flyCount > 0) return;
         
         this.moveCount++;
@@ -38,5 +37,10 @@ public class MoveObstacle : Obstacle
         var point = this.transform.position;
         point.x = referenceX + move;
         this.transform.position = point;
+    }
+
+    //ランダム化
+    public override void Randomizer(int random){
+        this.moveCount = this.MoveCount * (random % 4) / 4;
     }
 }

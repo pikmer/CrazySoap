@@ -14,7 +14,9 @@ public class AudioManager : MonoBehaviour
     int[] audioInterval;
     int AudioInterval = 4;
 
-    public AudioSource audioSource;
+    [SerializeField] AudioSource audioSource;
+
+    [SerializeField] AudioSource damageAudio;
 
     [SerializeField] Slider slider;
 
@@ -36,6 +38,7 @@ public class AudioManager : MonoBehaviour
 		if(Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer){
 			this.sliderUiObj.SetActive(false);
             this.audioSource.volume = 1f;
+            this.damageAudio.volume = 1f;
 		}
 		//PC対応
         else{
@@ -43,6 +46,7 @@ public class AudioManager : MonoBehaviour
             if(PlayerPrefs.HasKey(this.saveAudioVolumeKey)){
                 float saveAudioVolume = PlayerPrefs.GetFloat(this.saveAudioVolumeKey, 0.2f);
                 this.audioSource.volume = saveAudioVolume;
+                this.damageAudio.volume = saveAudioVolume;
             }
         }
 
@@ -91,10 +95,16 @@ public class AudioManager : MonoBehaviour
         this.audioPlayList[index] = true;
     }
 
+    public void PlayDamage(float health){
+        this.damageAudio.pitch = 2f - health;
+        this.damageAudio.Play();
+    }
+
     //音量
     public void VolumeChange(){
         if(Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer) return;
         this.audioSource.volume = this.slider.value;
+        this.damageAudio.volume = this.slider.value;
     }
     public void VolumeSet(){
         // AudioManager.Instance.PlaySE(7);

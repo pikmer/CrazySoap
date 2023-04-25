@@ -42,6 +42,7 @@ public class UpgradeItem : MonoBehaviour
                     //強化実行
                     Weapon.Instance.Upgrade();
                     item.SetActive(false);
+                    AudioManager.Instance.PlaySE(2);
                     break;
                 }
             }
@@ -52,11 +53,11 @@ public class UpgradeItem : MonoBehaviour
                 var magMove = direction.normalized * this.startItemSpeed;
                 this.startItem.transform.position += magMove;
                 this.startItemSpeed += 0.02f;
-                //マグネット判定
                 if(direction.sqrMagnitude <= this.startItemSpeed * this.startItemSpeed){
                     //強化実行
                     Weapon.Instance.SingleShotGet();
                     this.startItem.SetActive(false);
+                    AudioManager.Instance.PlaySE(2);
                 }
             }
         }

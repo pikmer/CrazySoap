@@ -105,7 +105,7 @@ public class ObstacleManager : MonoBehaviour
             this.waveText.text = "level\u00A0" + this.wave;
         }
         //水流変更 2インナーウェーブ前
-        if((this.waveTime + this.WaveTime / 3) % (this.WaveTime / 2) == 0){
+        if(this.innerWave >= 12 && (this.waveTime + this.WaveTime / 3) % (this.WaveTime / 2) == 0){
             if(Random.value < 0.5f){
                 this.sideStream = Random.Range(this.minStream, this.maxStream);
             }else{
@@ -113,7 +113,7 @@ public class ObstacleManager : MonoBehaviour
             }
         }
         //水流変更確定
-        if(this.waveTime % (this.WaveTime / 2) == 0){
+        if(this.wave >= 3 && this.waveTime % (this.WaveTime / 2) == 0){
             Player.Instance.ChangesideStream(this.sideStream);
             this.currentArrowCount = this.CurrentArrowCount;
             this.currentArrow.gameObject.SetActive(true);
@@ -176,7 +176,7 @@ public class ObstacleManager : MonoBehaviour
         }
 
         //水流
-        if(this.innerWave >= 4){
+        if(this.innerWave >= 13){
             if(this.sideStream > 0){
                 this.currents[this.currentIndex].rotation = Quaternion.Euler(0, 180, 1f);
             }else{
@@ -188,11 +188,14 @@ public class ObstacleManager : MonoBehaviour
         }
     }
 
-    public void SetObstacle(Vector3 position, int index){
+    public void SetObstacle(Vector3 position, int index, int random = -1){
         foreach (var obstacle in this.obstacles[index])
         {
             if(!obstacle.isActive){
                 obstacle.Init(position);
+                if(random != -1){
+                    obstacle.Randomizer(random);
+                }
                 return;
             }
         }

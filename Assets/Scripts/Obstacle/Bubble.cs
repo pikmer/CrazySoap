@@ -19,6 +19,7 @@ public class Bubble : HealthObstacle
             this.HPbar.localScale = new Vector3((float)this.HP / (float)this.MaxHP, size.y, size.z);
             this.HPbarBack.localScale = new Vector3(1f - this.HPbar.localScale.x, size.y, size.z);
         }
+        AudioManager.Instance.PlayDamage((float)this.HP / (float)this.MaxHP);
     }
     
     public override void Fly(Vector3 flyVec){

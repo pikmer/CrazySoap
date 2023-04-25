@@ -10,7 +10,7 @@ public class StageInfo
     public void SetManager(ObstacleManager manager){
         this.manager = manager;
         manager.stages = new Dictionary<int, UnityAction<float>[]>(){
-            // {1, new UnityAction<float>[]{MoveDuckBlack,}},
+            // {1, new UnityAction<float>[]{MoveObstacle,}},
 
             {1, new UnityAction<float>[]{Mutual,}},
             {2, new UnityAction<float>[]{RightLeft,}},
@@ -120,22 +120,28 @@ public class StageInfo
     }
 
     public void RightLeft(float offsetZ){
-        for (int i = 1; i < 5; i++)
+        for (int i = 3; i < 10; i++)
         {
-            manager.SetObstacle(new Vector3(0, 0, offsetZ + 10 * (1 + i)), 0);
-            manager.SetObstacle(new Vector3(-3, 0, offsetZ + 10 * (1 + i)), 0);
-            manager.SetObstacle(new Vector3(-6, 0, offsetZ + 10 * (1 + i)), 0);
-            manager.SetObstacle(new Vector3(-9, 0, offsetZ + 10 * (1 + i)), 0);
-            CoinParent.Instance.SetCoin(new Vector3(8, 0, offsetZ + 10 * (1 + i)));
+            manager.SetObstacle(new Vector3(0, 0, offsetZ + 5 * (1 + i)), 0);
+            if(i % 2 == 1) CoinParent.Instance.SetCoin(new Vector3(8, 0, offsetZ + 5 * (1 + i)));
         }
-        for (int i = 6; i < 10; i++)
+        manager.SetObstacle(new Vector3(-3, 0, offsetZ + 20), 0);
+        manager.SetObstacle(new Vector3(-6, 0, offsetZ + 20), 0);
+        manager.SetObstacle(new Vector3(-9, 0, offsetZ + 20), 0);
+        manager.SetObstacle(new Vector3(-1.5f, 0, offsetZ + 20), 0);
+        manager.SetObstacle(new Vector3(-4.5f, 0, offsetZ + 20), 0);
+        manager.SetObstacle(new Vector3(-7.5f, 0, offsetZ + 20), 0);
+        for (int i = 13; i < 20; i++)
         {
-            manager.SetObstacle(new Vector3(0, 0, offsetZ + 10 * (1 + i)), 0);
-            manager.SetObstacle(new Vector3(3, 0, offsetZ + 10 * (1 + i)), 0);
-            manager.SetObstacle(new Vector3(6, 0, offsetZ + 10 * (1 + i)), 0);
-            manager.SetObstacle(new Vector3(9, 0, offsetZ + 10 * (1 + i)), 0);
-            CoinParent.Instance.SetCoin(new Vector3(-8, 0, offsetZ + 10 * (1 + i)));
+            manager.SetObstacle(new Vector3(0, 0, offsetZ + 5 * (1 + i)), 0);
+            if(i % 2 == 1) CoinParent.Instance.SetCoin(new Vector3(-8, 0, offsetZ + 5 * (1 + i)));
         }
+        manager.SetObstacle(new Vector3(3, 0, offsetZ + 70), 0);
+        manager.SetObstacle(new Vector3(6, 0, offsetZ + 70), 0);
+        manager.SetObstacle(new Vector3(9, 0, offsetZ + 70), 0);
+        manager.SetObstacle(new Vector3(1.5f, 0, offsetZ + 70), 0);
+        manager.SetObstacle(new Vector3(4.5f, 0, offsetZ + 70), 0);
+        manager.SetObstacle(new Vector3(7.5f, 0, offsetZ + 70), 0);
     }
 
     float[] BranchPos = new float[]{1f, 2f, 3f, 8f, 9f, 10f};
@@ -244,17 +250,18 @@ public class StageInfo
 
     public void MoveObstacle(float offsetZ){
         var x = (Random.value < 0.5f ? 1f : -1f) * Random.Range(4f, 8f);
-        manager.SetObstacle(new Vector3(x, 0, offsetZ + 80), 7);
+        var random = Random.Range(0, 4);
+        manager.SetObstacle(new Vector3(x, 0, offsetZ + 80), 7, random);
         
-        manager.SetObstacle(new Vector3(0.5f, 0, offsetZ + 90), 5);
-        manager.SetObstacle(new Vector3(-0.5f, 0, offsetZ + 90), 6);
-        manager.SetObstacle(new Vector3(-9.5f, 0, offsetZ + 90), 5);
-        manager.SetObstacle(new Vector3(9.5f, 0, offsetZ + 90), 6);
+        manager.SetObstacle(new Vector3(0.5f, 0, offsetZ + 90), 5, random);
+        manager.SetObstacle(new Vector3(-0.5f, 0, offsetZ + 90), 6, random);
+        manager.SetObstacle(new Vector3(-9.5f, 0, offsetZ + 90), 5, random);
+        manager.SetObstacle(new Vector3(9.5f, 0, offsetZ + 90), 6, random);
 
-        manager.SetObstacle(new Vector3(5.5f, 0, offsetZ + 100), 5);
-        manager.SetObstacle(new Vector3(4.5f, 0, offsetZ + 100), 6);
-        manager.SetObstacle(new Vector3(-4.5f, 0, offsetZ + 100), 5);
-        manager.SetObstacle(new Vector3(-5.5f, 0, offsetZ + 100), 6);
+        manager.SetObstacle(new Vector3(5.5f, 0, offsetZ + 100), 5, random);
+        manager.SetObstacle(new Vector3(4.5f, 0, offsetZ + 100), 6, random);
+        manager.SetObstacle(new Vector3(-4.5f, 0, offsetZ + 100), 5, random);
+        manager.SetObstacle(new Vector3(-5.5f, 0, offsetZ + 100), 6, random);
 
         //コイン
         for (int i = 0; i < 6; i++)
@@ -286,25 +293,27 @@ public class StageInfo
         //     var x = Random.Range( -9.25f, 5.25f);
         //     manager.SetObstacle(new Vector3(x, 0, offsetZ + 5 * (1 + i)), 11);
         // }
-        
-        manager.SetObstacle(new Vector3(0.5f, 0, offsetZ + 40), 11);
-        manager.SetObstacle(new Vector3(-0.5f, 0, offsetZ + 40), 12);
-        manager.SetObstacle(new Vector3(-9.5f, 0, offsetZ + 40), 11);
-        manager.SetObstacle(new Vector3(9.5f, 0, offsetZ + 40), 12);
 
-        manager.SetObstacle(new Vector3(5.5f, 0, offsetZ + 60), 11);
-        manager.SetObstacle(new Vector3(4.5f, 0, offsetZ + 60), 12);
-        manager.SetObstacle(new Vector3(-4.5f, 0, offsetZ + 60), 11);
-        manager.SetObstacle(new Vector3(-5.5f, 0, offsetZ + 60), 12);
+        var random = Random.Range(0, 4);
         
-        manager.SetObstacle(new Vector3(0.5f, 0, offsetZ + 80), 11);
-        manager.SetObstacle(new Vector3(-0.5f, 0, offsetZ + 80), 12);
-        manager.SetObstacle(new Vector3(-9.5f, 0, offsetZ + 80), 11);
-        manager.SetObstacle(new Vector3(9.5f, 0, offsetZ + 80), 12);
+        manager.SetObstacle(new Vector3(0.5f, 0, offsetZ + 40), 11, random);
+        manager.SetObstacle(new Vector3(-0.5f, 0, offsetZ + 40), 12, random);
+        manager.SetObstacle(new Vector3(-9.5f, 0, offsetZ + 40), 11, random);
+        manager.SetObstacle(new Vector3(9.5f, 0, offsetZ + 40), 12, random);
 
-        manager.SetObstacle(new Vector3(5.5f, 0, offsetZ + 100), 11);
-        manager.SetObstacle(new Vector3(4.5f, 0, offsetZ + 100), 12);
-        manager.SetObstacle(new Vector3(-4.5f, 0, offsetZ + 100), 11);
-        manager.SetObstacle(new Vector3(-5.5f, 0, offsetZ + 100), 12);
+        manager.SetObstacle(new Vector3(5.5f, 0, offsetZ + 60), 11, random);
+        manager.SetObstacle(new Vector3(4.5f, 0, offsetZ + 60), 12, random);
+        manager.SetObstacle(new Vector3(-4.5f, 0, offsetZ + 60), 11, random);
+        manager.SetObstacle(new Vector3(-5.5f, 0, offsetZ + 60), 12, random);
+        
+        manager.SetObstacle(new Vector3(0.5f, 0, offsetZ + 80), 11, random);
+        manager.SetObstacle(new Vector3(-0.5f, 0, offsetZ + 80), 12, random);
+        manager.SetObstacle(new Vector3(-9.5f, 0, offsetZ + 80), 11, random);
+        manager.SetObstacle(new Vector3(9.5f, 0, offsetZ + 80), 12, random);
+
+        manager.SetObstacle(new Vector3(5.5f, 0, offsetZ + 100), 11, random);
+        manager.SetObstacle(new Vector3(4.5f, 0, offsetZ + 100), 12, random);
+        manager.SetObstacle(new Vector3(-4.5f, 0, offsetZ + 100), 11, random);
+        manager.SetObstacle(new Vector3(-5.5f, 0, offsetZ + 100), 12, random);
     }
 }

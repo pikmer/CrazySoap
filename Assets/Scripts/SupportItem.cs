@@ -112,6 +112,7 @@ public class SupportItem : MonoBehaviour
                 Player.Instance.Jump();
                 break;
         }
+        AudioManager.Instance.PlaySE(2);
     }
 
     public void SetItemRandom(Vector3 position)

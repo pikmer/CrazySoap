@@ -58,4 +58,7 @@ public class Obstacle : MonoBehaviour
         this.rotateAxis.y = 0;
         this.rotateAxis = Quaternion.Euler(0, 90, 0) * this.rotateAxis;
     }
+
+    //ランダム化
+    public virtual void Randomizer(int random){}
 }

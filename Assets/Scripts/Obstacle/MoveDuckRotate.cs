@@ -44,4 +44,9 @@ public class MoveDuckRotate : Obstacle
         
         this.graphics.transform.Rotate(0, 10, 0);
     }
+
+    //ランダム化
+    public override void Randomizer(int random){
+        this.moveCount = this.MoveCount * (random % 4) / 4;
+    }
 }
