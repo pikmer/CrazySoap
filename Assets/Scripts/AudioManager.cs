@@ -34,20 +34,20 @@ public class AudioManager : MonoBehaviour
     {
         Instance = this;
 
-		//スマホ対応
-		if(Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer){
-			this.sliderUiObj.SetActive(false);
-            this.audioSource.volume = 1f;
-            this.damageAudio.volume = 1f;
-		}
 		//PC対応
-        else{
+		if(GameManager.Instance.isPC){
             //音量セーブがあれば取得
             if(PlayerPrefs.HasKey(this.saveAudioVolumeKey)){
                 float saveAudioVolume = PlayerPrefs.GetFloat(this.saveAudioVolumeKey, 0.2f);
                 this.audioSource.volume = saveAudioVolume;
                 this.damageAudio.volume = saveAudioVolume;
             }
+		}
+		//スマホ対応
+        else{
+			this.sliderUiObj.SetActive(false);
+            this.audioSource.volume = 1f;
+            this.damageAudio.volume = 1f;
         }
 
         //プレイリスト作成

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Runtime.InteropServices;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,8 +23,20 @@ public class GameManager : MonoBehaviour
     public Text continueDelayText;
     int continueMoney = 100;
 
+    //プラットフォーム
+    // [HideInInspector][System.NonSerialized]
+    public bool isPC = true;
+    #if (UNITY_WEBGL && !UNITY_EDITOR)
+        [DllImport("__Internal")]
+        private static extern bool CheckPlatform();
+    #endif
+
     void Awake(){
         Instance = this;
+        
+        #if (UNITY_WEBGL && !UNITY_EDITOR)
+            this.isPC = CheckPlatform();
+        #endif
     }
 
     void Start()

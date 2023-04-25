@@ -147,8 +147,10 @@ public class ObstacleManager : MonoBehaviour
 
         //3の倍数は強化ポイント
         if(this.innerWave % 6 == 0){
-            if(this.innerWave < 24){
+            if(this.innerWave < 12){
                 this.stageInfo.Upgrade(playerPosZ + 100 * z);
+            }else if(this.innerWave < 24){
+                this.stageInfo.UpgradeAxis(playerPosZ + 100 * z);
             }else{
                 this.stageInfo.Wall(playerPosZ + 100 * z);
             }

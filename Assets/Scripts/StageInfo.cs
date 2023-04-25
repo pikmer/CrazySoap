@@ -12,7 +12,7 @@ public class StageInfo
         manager.stages = new Dictionary<int, UnityAction<float>[]>(){
             // {1, new UnityAction<float>[]{MoveObstacle,}},
 
-            {1, new UnityAction<float>[]{Mutual,}},
+            {1, new UnityAction<float>[]{Simple,}},
             {2, new UnityAction<float>[]{RightLeft,}},
             {3, new UnityAction<float>[]{Branch, Center, CenterBlock}},
             {5, new UnityAction<float>[]{
@@ -25,11 +25,16 @@ public class StageInfo
                 Bubble, MoveBubble, Upgrade, BubbleSpawner
             }},
 
+            {13, new UnityAction<float>[]{
+                Mutual, CenterBlock, RightLeft, Branch, Center,
+                Bubble, MoveBubble, UpgradeAxis, BubbleSpawner
+            }},
+
             {16, new UnityAction<float>[]{UpgradeJump,}},
 
             {17, new UnityAction<float>[]{
                 Mutual, CenterBlock, RightLeft, Branch, Center,
-                Bubble, MoveBubble, Upgrade, BubbleSpawner
+                Bubble, MoveBubble, UpgradeAxis, BubbleSpawner
             }},
 
             {24, new UnityAction<float>[]{
@@ -42,6 +47,15 @@ public class StageInfo
                 BubbleLv2, MoveBubbleLv2, Wall, BubbleSpawner3, MoveObstacle,
             }},
         };
+    }
+
+    void Simple(float offsetZ)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            manager.SetObstacle(new Vector3(-6 + 4 * i, 0, offsetZ + 100f), 0);
+            manager.SetObstacle(new Vector3(-6 + 4 * i, 0, offsetZ + 85f), 0);
+        }
     }
 
     void Mutual(float offsetZ)
@@ -57,6 +71,29 @@ public class StageInfo
     }
 
     public void Upgrade(float offsetZ)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            manager.SetObstacle(new Vector3(-8 + 4 * i, 0, offsetZ + 90f), 0);
+        }
+        //強化アイテム
+        var x = -6 + 4 * Random.Range(0, 4);
+        var upgradePos = new Vector3(x, 0, offsetZ + 90f);
+        manager.SetObstacle(upgradePos, 1);
+        if(Random.value < 0.5f){
+            UpgradeItem.Instance.SetItem(upgradePos);
+        }else{
+            SupportItem.Instance.SetItemRandomJumpNone(upgradePos);
+        }
+
+        //コイン
+        for (int i = 2; i < 5; i++)
+        {
+            CoinParent.Instance.SetCoin(new Vector3(x, 0, offsetZ + 10 * (1 + i)));
+        }
+    }
+
+    public void UpgradeAxis(float offsetZ)
     {
         for (int i = 0; i < 5; i++)
         {

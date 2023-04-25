@@ -18,6 +18,8 @@ public class Player : MonoBehaviour
     [HideInInspector][System.NonSerialized]
     public Vector3 forwardVelosity = new Vector3(0, 0, 0.5f);
     Vector3 rightVelosity = new Vector3(0.25f, 0, 0);
+    int leftInputCount;
+    int rightInputCount;
 
     //ジャンプ
     bool isJump = false;
@@ -69,6 +71,7 @@ public class Player : MonoBehaviour
     int ShieldInterval = 20 * 60;
     int shieldCount;
     int ShieldCount = 15 * 60;
+    //
     public Counter shieldCounter;
     public Text shieldText;
     public Image shieldImage;
@@ -76,6 +79,8 @@ public class Player : MonoBehaviour
     public Sprite watchSprite;
     public int shieldUseCount { get; private set;}
     string shieldUseCountKey = "shield";
+    //
+    public Text shieldTextSP;
     
     void Awake()
     {
@@ -88,16 +93,21 @@ public class Player : MonoBehaviour
         this.transform.position = this.startPos;
 
         this.shieldUseCount = PlayerPrefs.GetInt(this.shieldUseCountKey, 3);
+
+		//PC対応
+		if(GameManager.Instance.isPC){
+            this.shieldTextSP.transform.parent.gameObject.SetActive(false);
+		}
+		//スマホ対応
+        else{
+            this.shieldText.transform.parent.gameObject.SetActive(false);
+            this.shieldText = this.shieldTextSP;
+        }
     }
 
     void Update(){
-        if(Input.GetKeyDown(KeyCode.Space) && this.shieldUseCount > 0 && this.shieldCount <= 0 && this.shieldInterval <= 0){
-            this.isShield = true;
-            this.shieldCount = this.ShieldCount;
-            this.shieldObj.SetActive(true);
-
-            this.ShieldCountSet(-1);
-            this.shieldText.text = this.shieldUseCount.ToString();
+        if(Input.GetKeyDown(KeyCode.Space)){
+            this.Shield();
         }
         //ジャンプ仮
         // if(Input.GetKeyDown(KeyCode.W)){
@@ -119,21 +129,41 @@ public class Player : MonoBehaviour
         }else{
             var transform = this.transform;
 
+            //スマホ操作
+            bool isSpLeft = false, isSpRight = false;
+            if(!GameManager.Instance.isPC && Input.GetMouseButton(0)){
+                if(Input.mousePosition.x <= Screen.width / 2){
+                    isSpLeft = true;
+                }else{
+                    isSpRight = true;
+                }
+            }
+
             //移動
             this.moveDirection += this.forwardVelosity;
-            if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)){
-                this.moveDirection -= this.rightVelosity;
+            if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) || isSpLeft){
+                this.leftInputCount++;
+                var value = 1f;
+                if(this.leftInputCount <= 3) value = Mathf.Pow(0.5f, 4 - this.leftInputCount);
+                this.moveDirection -= this.rightVelosity * value;
                 this.bodyTilt -= this.addBodyTilt;
                 if(this.bodyTilt < -this.BodyTilt){
                     this.bodyTilt = -this.BodyTilt;
                 }
+            }else if(this.leftInputCount != 0){
+                this.leftInputCount = 0;
             }
-            if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)){
-                this.moveDirection += this.rightVelosity;
+            if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow) || isSpRight){
+                this.rightInputCount++;
+                var value = 1f;
+                if(this.rightInputCount <= 3) value = Mathf.Pow(0.5f, 4 - this.rightInputCount);
+                this.moveDirection += this.rightVelosity * value;
                 this.bodyTilt += this.addBodyTilt;
                 if(this.bodyTilt > this.BodyTilt){
                     this.bodyTilt = this.BodyTilt;
                 }
+            }else if(this.rightInputCount != 0){
+                this.rightInputCount = 0;
             }
             if(transform.position.z >= this.positionResetRange){
                 GameManager.Instance.PositionReset();
@@ -278,6 +308,17 @@ public class Player : MonoBehaviour
         ObstacleManager.Instance.JumpItemSet(this.forwardVelosity.z, this.JumpSpeed, this.gravity);
     }
 
+    public void Shield(){
+        if(this.shieldUseCount > 0 && this.shieldCount <= 0 && this.shieldInterval <= 0){
+            this.isShield = true;
+            this.shieldCount = this.ShieldCount;
+            this.shieldObj.SetActive(true);
+
+            this.ShieldCountSet(-1);
+            this.shieldText.text = this.shieldUseCount.ToString();
+        }
+    }
+
     public void ChangesideStream(float sideStream){
         this.sideStream = sideStream;
     }
@@ -313,6 +354,9 @@ public class Player : MonoBehaviour
         this.graphicsTrf.gameObject.SetActive(true);
         this.flyCount = 0;
         BubbleBombEffect.Instance.Play(this.transform.position);
+        //
+        this.leftInputCount = 0;
+        this.rightInputCount = 0;
         //周りを吹き飛ばす
         var position = this.transform.position;
         var size = new Vector3(15f, 10f, 70f);
@@ -345,6 +389,9 @@ public class Player : MonoBehaviour
         weapon.Retry();
         this.isWingman = false;
         this.wingmanObj.SetActive(false);
+        //
+        this.leftInputCount = 0;
+        this.rightInputCount = 0;
         //
         this.isJump = false;
         this.jumpSpeed = 0;
