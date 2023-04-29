@@ -13,7 +13,7 @@ public class StageInfo
             // {1, new UnityAction<float>[]{MoveObstacle,}},
 
             {1, new UnityAction<float>[]{Simple,}},
-            {2, new UnityAction<float>[]{RightLeft,}},
+            {2, new UnityAction<float>[]{RightLeftEasy,}},
             {3, new UnityAction<float>[]{Branch, Center, CenterBlock}},
             {5, new UnityAction<float>[]{
                 Mutual, CenterBlock, RightLeft, Branch, Center,
@@ -156,29 +156,45 @@ public class StageInfo
         }
     }
 
+    public void RightLeftEasy(float offsetZ){
+        for (int i = 3; i < 10; i++)
+        {
+            manager.SetObstacle(new Vector3(0, 0, offsetZ + 5 * (1 + i)), 0);
+            if(i % 2 == 1) CoinParent.Instance.SetCoin(new Vector3(5, 0, offsetZ + 5 * (1 + i)));
+        }
+        for (int i = 1; i <= 6; i++)
+        {
+            manager.SetObstacle(new Vector3(-1.5f * (float)i, 0, offsetZ + 20), 0);
+        }
+        for (int i = 13; i < 20; i++)
+        {
+            manager.SetObstacle(new Vector3(0, 0, offsetZ + 5 * (1 + i)), 0);
+            if(i % 2 == 1 && i > 13) CoinParent.Instance.SetCoin(new Vector3(-5, 0, offsetZ + 5 * (1 + i)));
+        }
+        for (int i = 1; i <= 6; i++)
+        {
+            manager.SetObstacle(new Vector3(1.5f * (float)i, 0, offsetZ + 70), 0);
+        }
+    }
     public void RightLeft(float offsetZ){
         for (int i = 3; i < 10; i++)
         {
             manager.SetObstacle(new Vector3(0, 0, offsetZ + 5 * (1 + i)), 0);
             if(i % 2 == 1) CoinParent.Instance.SetCoin(new Vector3(8, 0, offsetZ + 5 * (1 + i)));
         }
-        manager.SetObstacle(new Vector3(-3, 0, offsetZ + 20), 0);
-        manager.SetObstacle(new Vector3(-6, 0, offsetZ + 20), 0);
-        manager.SetObstacle(new Vector3(-9, 0, offsetZ + 20), 0);
-        manager.SetObstacle(new Vector3(-1.5f, 0, offsetZ + 20), 0);
-        manager.SetObstacle(new Vector3(-4.5f, 0, offsetZ + 20), 0);
-        manager.SetObstacle(new Vector3(-7.5f, 0, offsetZ + 20), 0);
+        for (int i = 1; i <= 6; i++)
+        {
+            manager.SetObstacle(new Vector3(-1.5f * (float)i, 0, offsetZ + 20), 0);
+        }
         for (int i = 13; i < 20; i++)
         {
             manager.SetObstacle(new Vector3(0, 0, offsetZ + 5 * (1 + i)), 0);
-            if(i % 2 == 1) CoinParent.Instance.SetCoin(new Vector3(-8, 0, offsetZ + 5 * (1 + i)));
+            if(i % 2 == 1 && i > 13) CoinParent.Instance.SetCoin(new Vector3(-8, 0, offsetZ + 5 * (1 + i)));
         }
-        manager.SetObstacle(new Vector3(3, 0, offsetZ + 70), 0);
-        manager.SetObstacle(new Vector3(6, 0, offsetZ + 70), 0);
-        manager.SetObstacle(new Vector3(9, 0, offsetZ + 70), 0);
-        manager.SetObstacle(new Vector3(1.5f, 0, offsetZ + 70), 0);
-        manager.SetObstacle(new Vector3(4.5f, 0, offsetZ + 70), 0);
-        manager.SetObstacle(new Vector3(7.5f, 0, offsetZ + 70), 0);
+        for (int i = 1; i <= 6; i++)
+        {
+            manager.SetObstacle(new Vector3(1.5f * (float)i, 0, offsetZ + 70), 0);
+        }
     }
 
     float[] BranchPos = new float[]{1f, 2f, 3f, 8f, 9f, 10f};

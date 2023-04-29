@@ -92,7 +92,13 @@ public class Player : MonoBehaviour
 
         this.transform.position = this.startPos;
 
-        this.shieldUseCount = PlayerPrefs.GetInt(this.shieldUseCountKey, 3);
+        // PlayerPrefs.DeleteKey(this.shieldUseCountKey);
+        if(PlayerPrefs.HasKey(this.shieldUseCountKey)){
+            this.shieldUseCount = PlayerPrefs.GetInt(this.shieldUseCountKey, 3);
+        }else{
+            this.shieldUseCount = 3;
+            PlayerPrefs.SetInt(this.shieldUseCountKey, this.shieldUseCount);
+        }
 
 		//PC対応
 		if(GameManager.Instance.isPC){
@@ -309,7 +315,7 @@ public class Player : MonoBehaviour
     }
 
     public void Shield(){
-        if(this.shieldUseCount > 0 && this.shieldCount <= 0 && this.shieldInterval <= 0){
+        if(!this.isDead && this.shieldUseCount > 0 && this.shieldCount <= 0 && this.shieldInterval <= 0){
             this.isShield = true;
             this.shieldCount = this.ShieldCount;
             this.shieldObj.SetActive(true);
