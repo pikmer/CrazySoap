@@ -10,7 +10,7 @@ public class StageInfo
     public void SetManager(ObstacleManager manager){
         this.manager = manager;
         manager.stages = new Dictionary<int, UnityAction<float>[]>(){
-            // {1, new UnityAction<float>[]{MoveObstacle,}},
+            // {1, new UnityAction<float>[]{MoveDuckBlack,}},
 
             {1, new UnityAction<float>[]{Simple,}},
             {2, new UnityAction<float>[]{RightLeftEasy,}},
