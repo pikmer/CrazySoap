@@ -139,6 +139,19 @@ public class ObstacleManager : MonoBehaviour
     void SetStage(float z){
         var playerPosZ = Player.Instance.transform.position.z;
         this.innerWave++;
+
+        //余分な障害物の削除
+        foreach (var obstacleArray in this.obstacles)
+        {
+            foreach (var obstacle in obstacleArray)
+            {
+                if(obstacle.isActive){
+                    if(obstacle.transform.position.z - playerPosZ <= -5f){
+                        obstacle.SetActive(false);
+                    }
+                }
+            }
+        }
         
         //抽選対象の切り替え
         if(this.stages.ContainsKey(this.innerWave)){
@@ -211,9 +224,6 @@ public class ObstacleManager : MonoBehaviour
             {
                 if(obstacle.isActive){
                     obstacle.transform.position -= Vector3.forward * positionResetRange;
-                    if(obstacle.transform.position.z <= -10f){
-                        obstacle.SetActive(false);
-                    }
                 }
             }
         }

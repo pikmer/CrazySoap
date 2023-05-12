@@ -21,13 +21,14 @@ public class ScoreManager : MonoBehaviour
     public Color scorePlusColorBubble;
 
     //保存用のキー
-    string topScoreKey = "topScore";
+    string topScoresKey = "topScores";
     string todayScoreKey = "todayScore";
     string todayScoreTimeKey = "todayScoreTime";
 
-    [SerializeField] Text topScoreText;
+    string saveNotFound = "saveNotFound";
+
+    [SerializeField] Text[] topScoresText;
     [SerializeField] Text todayScoreText;
-    [SerializeField] Text lastScoreText;
 
     [SerializeField]
     Transform playerTrf;
@@ -41,11 +42,15 @@ public class ScoreManager : MonoBehaviour
         if(now != PlayerPrefs.GetString(this.todayScoreTimeKey, "")){
             PlayerPrefs.SetInt(this.todayScoreKey, 0);
         }
-        this.topScoreText.text = "top : " + PlayerPrefs.GetInt(this.topScoreKey, 0);
         this.todayScoreText.text = "today top : " + PlayerPrefs.GetInt(this.todayScoreKey, 0);
-        this.lastScoreText.text = "";
 
-        this.topScoreTextGame.text = "top " + PlayerPrefs.GetInt(this.topScoreKey, 0);
+
+        var topScores = this.GetTopScores();
+        for (int i = 0; i < this.topScoresText.Length; i++)
+        {
+            this.topScoresText[i].text = topScores.scores[i].ToString();
+        }
+        this.topScoreTextGame.text = "top " + topScores.scores[0];
     }
 
     void FixedUpdate()
@@ -66,6 +71,15 @@ public class ScoreManager : MonoBehaviour
         if(score != this.befourScore){
             this.befourScore = score;
             this.scoreText.text = score.ToString();
+        }
+    }
+
+    TopScores GetTopScores(){
+        string recordJson = PlayerPrefs.GetString(topScoresKey, this.saveNotFound);
+        if(recordJson == this.saveNotFound){
+            return new TopScores();
+        }else{
+            return JsonUtility.FromJson<TopScores>(recordJson);
         }
     }
 
@@ -91,15 +105,33 @@ public class ScoreManager : MonoBehaviour
 
     public void GameStart(){
         this.scoreText.text = "";
-        this.topScoreTextGame.text = "top " + PlayerPrefs.GetInt(this.topScoreKey, 0);
+        this.topScoreTextGame.text = "top " + this.GetTopScores().scores[0];
     }
 
     public void GameOver(){
         var score = this.GetScore();
+
         //最高記録
-        if(score > PlayerPrefs.GetInt(this.topScoreKey, 0)){
-            PlayerPrefs.SetInt(this.topScoreKey, score);
+        var topScores = this.GetTopScores();
+        var isRecord = false;
+        var shift = 0;
+        for (int i = 0; i < topScores.scores.Length; i++)
+        {
+            if(isRecord){
+                var scoreTemp = topScores.scores[i]; 
+                topScores.scores[i] = shift;
+                shift = scoreTemp;
+            }else if(score > topScores.scores[i]){
+                shift = topScores.scores[i];
+                topScores.scores[i] = score;
+                isRecord = true;
+            }
+            this.topScoresText[i].text = topScores.scores[i].ToString();
         }
+        if(isRecord){
+            PlayerPrefs.SetString(this.topScoresKey, JsonUtility.ToJson(topScores));
+        }
+
         //本日の最高記録
         var now = DateTime.Now.ToShortDateString();
         if(now == PlayerPrefs.GetString(this.todayScoreTimeKey, "")){
@@ -110,10 +142,7 @@ public class ScoreManager : MonoBehaviour
             PlayerPrefs.SetInt(this.todayScoreKey, score);
             PlayerPrefs.SetString(this.todayScoreTimeKey, now);
         }
-        //
-        this.topScoreText.text = "top : " + PlayerPrefs.GetInt(this.topScoreKey, 0);
         this.todayScoreText.text = "today top : " + PlayerPrefs.GetInt(this.todayScoreKey, 0);
-        // this.lastScoreText.text = "last : " + score;
     }
 
     public void Retry(){
@@ -123,5 +152,16 @@ public class ScoreManager : MonoBehaviour
         this.befourScore = 0;
         this.scoreText.text = "0";
         this.scorePlusText.text = "";
+    }
+
+    public void DataDelete()
+    {
+        PlayerPrefs.DeleteKey(this.topScoresKey);
+        PlayerPrefs.DeleteKey(this.todayScoreKey);
+        PlayerPrefs.DeleteKey(this.todayScoreTimeKey);
+    }
+
+    class TopScores{
+        public int[] scores = new int[5];
     }
 }

@@ -135,6 +135,12 @@ public class GameManager : MonoBehaviour
         ScoreManager.Instance.Retry();
     }
 
+    public void DataDelete(){
+        ScoreManager.Instance.DataDelete();
+        CoinParent.Instance.DataDelete();
+        Player.Instance.DataDelete();
+    }
+
     //回転してないボックス同士の判定
     static public bool CheckBoxColl(Vector3 position1, Vector3 size1, Vector3 position2, Vector3 size2){
         var hitRange = (size1 + size2) / 2f;

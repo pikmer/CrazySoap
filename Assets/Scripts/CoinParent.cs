@@ -203,6 +203,11 @@ public class CoinParent : MonoBehaviour
         this.isMagnet = false;
         this.isDoubleGet = false;
     }
+
+    public void DataDelete()
+    {
+        PlayerPrefs.DeleteKey(this.moneyKey);
+    }
 }
 
 public class Coin{

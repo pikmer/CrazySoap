@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -422,5 +423,10 @@ public class Player : MonoBehaviour
         this.shieldText.text = this.shieldUseCount.ToString();
         this.shieldText.color = Color.white;
         this.shieldImage.sprite = this.shieldSprite;
+    }
+
+    public void DataDelete()
+    {
+        PlayerPrefs.DeleteKey(this.shieldUseCountKey);
     }
 }
