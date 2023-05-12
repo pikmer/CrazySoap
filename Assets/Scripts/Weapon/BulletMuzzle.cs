@@ -6,11 +6,11 @@ public class BulletMuzzle : MonoBehaviour
 {
     public GameObject bulletPrefab;
     protected Bullet[] bullets;
-    public int bulletsLength = 20;
+    int bulletsLength = 9;
 
     public float speed = 0.3f; 
     Vector3 buleltVelosity = new Vector3(0, 0, 0.6f);
-    int bulletTimer = 60;
+    int bulletTimer = 70;
 
     static List<BulletMuzzle> muzzles = new List<BulletMuzzle>();
 

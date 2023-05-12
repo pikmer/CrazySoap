@@ -68,7 +68,7 @@ public class Player : MonoBehaviour
     bool isShield = false;
     public GameObject shieldObj;
     int shieldInterval;
-    int ShieldInterval = 20 * 60;
+    int ShieldInterval = 10 * 60;
     int shieldCount;
     int ShieldCount = 15 * 60;
     //
@@ -250,6 +250,8 @@ public class Player : MonoBehaviour
                                 this.shieldText.color = new Color(1f, 0.5f, 0.5f);
                                 this.shieldText.text = (this.shieldInterval / 60).ToString();
                                 this.shieldImage.sprite = this.watchSprite;
+                                //周りを吹き飛ばす
+                                this.BlowOff(this.transform.position, new Vector3(2f, 2f, 2f));
                             }else if(!this.isInvincible){
                                 GameManager.Instance.PlayerKilled();
                                 this.flyCount = this.FlyCount;
@@ -325,6 +327,31 @@ public class Player : MonoBehaviour
         }
     }
 
+    //周りを吹き飛ばす
+    public void BlowOff(Vector3 position, Vector3 size){
+        foreach (var obstacleArray in  ObstacleManager.Instance.obstacles)
+        {
+            foreach (var obstacle in obstacleArray)
+            {
+                if(obstacle.isActive && obstacle.flyCount <= 0){
+                    var isHit = false;
+                    foreach (var coll in obstacle.colliders)
+                    {
+                        if(GameManager.CheckBoxColl(position, size
+                        , obstacle.transform.position + coll.center, coll.size)){
+                            isHit = true;
+                            break;
+                        }
+                    }
+                    if(isHit){
+                        var flyVec = obstacle.transform.position + obstacle.center - this.transform.position;
+                        obstacle.Fly(flyVec.normalized * 1f);
+                    }
+                }
+            }
+        }
+    }
+
     public void ChangesideStream(float sideStream){
         this.sideStream = sideStream;
     }
@@ -364,29 +391,7 @@ public class Player : MonoBehaviour
         this.leftInputCount = 0;
         this.rightInputCount = 0;
         //周りを吹き飛ばす
-        var position = this.transform.position;
-        var size = new Vector3(15f, 10f, 70f);
-        foreach (var obstacleArray in  ObstacleManager.Instance.obstacles)
-        {
-            foreach (var obstacle in obstacleArray)
-            {
-                if(obstacle.isActive && obstacle.flyCount <= 0){
-                    var isHit = false;
-                    foreach (var coll in obstacle.colliders)
-                    {
-                        if(GameManager.CheckBoxColl(position, size
-                        , obstacle.transform.position + coll.center, coll.size)){
-                            isHit = true;
-                            break;
-                        }
-                    }
-                    if(isHit){
-                        var flyVec = obstacle.transform.position + obstacle.center - this.transform.position;
-                        obstacle.Fly(flyVec.normalized * 1f);
-                    }
-                }
-            }
-        }
+        this.BlowOff(this.transform.position, new Vector3(15f, 10f, 70f));
     }
 
     public void Retry(){
