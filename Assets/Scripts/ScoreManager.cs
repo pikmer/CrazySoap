@@ -30,6 +30,9 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] Text[] topScoresText;
     [SerializeField] Text todayScoreText;
 
+    [SerializeField] RectTransform topScoreEmp;
+    [SerializeField] GameObject todayScoreEmp;
+
     [SerializeField]
     Transform playerTrf;
 
@@ -42,7 +45,7 @@ public class ScoreManager : MonoBehaviour
         if(now != PlayerPrefs.GetString(this.todayScoreTimeKey, "")){
             PlayerPrefs.SetInt(this.todayScoreKey, 0);
         }
-        this.todayScoreText.text = "today top : " + PlayerPrefs.GetInt(this.todayScoreKey, 0);
+        this.todayScoreText.text = PlayerPrefs.GetInt(this.todayScoreKey, 0).ToString();
 
 
         var topScores = this.GetTopScores();
@@ -121,15 +124,23 @@ public class ScoreManager : MonoBehaviour
                 var scoreTemp = topScores.scores[i]; 
                 topScores.scores[i] = shift;
                 shift = scoreTemp;
+                this.topScoresText[i].color = Color.white;
             }else if(score > topScores.scores[i]){
                 shift = topScores.scores[i];
                 topScores.scores[i] = score;
                 isRecord = true;
+                this.topScoreEmp.anchoredPosition3D = new Vector3(0, -20 - 40 * (i + 1), 0);
+                this.topScoreEmp.gameObject.SetActive(true);
+                this.topScoresText[i].color = Color.yellow;
+            }else{
+                this.topScoresText[i].color = Color.white;
             }
             this.topScoresText[i].text = topScores.scores[i].ToString();
         }
         if(isRecord){
             PlayerPrefs.SetString(this.topScoresKey, JsonUtility.ToJson(topScores));
+        }else{
+            this.topScoreEmp.gameObject.SetActive(false);
         }
 
         //本日の最高記録
@@ -137,12 +148,19 @@ public class ScoreManager : MonoBehaviour
         if(now == PlayerPrefs.GetString(this.todayScoreTimeKey, "")){
             if(score > PlayerPrefs.GetInt(this.todayScoreKey, 0)){
                 PlayerPrefs.SetInt(this.todayScoreKey, score);
+                this.todayScoreEmp.SetActive(true);
+                this.todayScoreText.color = Color.yellow;
+            }else{
+                this.todayScoreEmp.SetActive(false);
+                this.todayScoreText.color = Color.white;
             }
         }else{
             PlayerPrefs.SetInt(this.todayScoreKey, score);
             PlayerPrefs.SetString(this.todayScoreTimeKey, now);
+            this.todayScoreEmp.SetActive(true);
+            this.todayScoreText.color = Color.yellow;
         }
-        this.todayScoreText.text = "today top : " + PlayerPrefs.GetInt(this.todayScoreKey, 0);
+        this.todayScoreText.text = PlayerPrefs.GetInt(this.todayScoreKey, 0).ToString();
     }
 
     public void Retry(){
