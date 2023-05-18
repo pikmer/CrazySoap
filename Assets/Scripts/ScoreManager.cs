@@ -28,10 +28,14 @@ public class ScoreManager : MonoBehaviour
     string saveNotFound = "saveNotFound";
 
     [SerializeField] Text[] topScoresText;
+    [SerializeField] Text[] topScoresText2;
     [SerializeField] Text todayScoreText;
+    [SerializeField] Text todayScoreText2;
 
     [SerializeField] RectTransform topScoreEmp;
+    [SerializeField] RectTransform topScoreEmp2;
     [SerializeField] GameObject todayScoreEmp;
+    [SerializeField] GameObject todayScoreEmp2;
 
     [SerializeField]
     Transform playerTrf;
@@ -46,12 +50,14 @@ public class ScoreManager : MonoBehaviour
             PlayerPrefs.SetInt(this.todayScoreKey, 0);
         }
         this.todayScoreText.text = PlayerPrefs.GetInt(this.todayScoreKey, 0).ToString();
+        this.todayScoreText2.text = PlayerPrefs.GetInt(this.todayScoreKey, 0).ToString();
 
 
         var topScores = this.GetTopScores();
         for (int i = 0; i < this.topScoresText.Length; i++)
         {
             this.topScoresText[i].text = topScores.scores[i].ToString();
+            this.topScoresText2[i].text = topScores.scores[i].ToString();
         }
         this.topScoreTextGame.text = "top " + topScores.scores[0];
     }
@@ -125,22 +131,29 @@ public class ScoreManager : MonoBehaviour
                 topScores.scores[i] = shift;
                 shift = scoreTemp;
                 this.topScoresText[i].color = Color.white;
+                this.topScoresText2[i].color = Color.white;
             }else if(score > topScores.scores[i]){
                 shift = topScores.scores[i];
                 topScores.scores[i] = score;
                 isRecord = true;
                 this.topScoreEmp.anchoredPosition3D = new Vector3(0, -20 - 40 * (i + 1), 0);
                 this.topScoreEmp.gameObject.SetActive(true);
+                this.topScoreEmp2.anchoredPosition3D = new Vector3(0, -20 - 40 * (i + 1), 0);
+                this.topScoreEmp2.gameObject.SetActive(true);
                 this.topScoresText[i].color = Color.yellow;
+                this.topScoresText2[i].color = Color.yellow;
             }else{
                 this.topScoresText[i].color = Color.white;
+                this.topScoresText2[i].color = Color.white;
             }
             this.topScoresText[i].text = topScores.scores[i].ToString();
+            this.topScoresText2[i].text = topScores.scores[i].ToString();
         }
         if(isRecord){
             PlayerPrefs.SetString(this.topScoresKey, JsonUtility.ToJson(topScores));
         }else{
             this.topScoreEmp.gameObject.SetActive(false);
+            this.topScoreEmp2.gameObject.SetActive(false);
         }
 
         //本日の最高記録
@@ -149,18 +162,25 @@ public class ScoreManager : MonoBehaviour
             if(score > PlayerPrefs.GetInt(this.todayScoreKey, 0)){
                 PlayerPrefs.SetInt(this.todayScoreKey, score);
                 this.todayScoreEmp.SetActive(true);
+                this.todayScoreEmp2.SetActive(true);
                 this.todayScoreText.color = Color.yellow;
+                this.todayScoreText2.color = Color.yellow;
             }else{
                 this.todayScoreEmp.SetActive(false);
+                this.todayScoreEmp2.SetActive(false);
                 this.todayScoreText.color = Color.white;
+                this.todayScoreText2.color = Color.white;
             }
         }else{
             PlayerPrefs.SetInt(this.todayScoreKey, score);
             PlayerPrefs.SetString(this.todayScoreTimeKey, now);
             this.todayScoreEmp.SetActive(true);
+            this.todayScoreEmp2.SetActive(true);
             this.todayScoreText.color = Color.yellow;
+            this.todayScoreText2.color = Color.yellow;
         }
         this.todayScoreText.text = PlayerPrefs.GetInt(this.todayScoreKey, 0).ToString();
+        this.todayScoreText2.text = PlayerPrefs.GetInt(this.todayScoreKey, 0).ToString();
     }
 
     public void Retry(){
