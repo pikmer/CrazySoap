@@ -15,7 +15,10 @@ public class UIManager : MonoBehaviour
     {
         Instance = this;
         
-        this.Retry();
+        this.titleUI.SetActive(true);
+        this.gameoverUI.SetActive(false);
+        this.gameUI.SetActive(false);
+        this.continueUI.SetActive(false);
     }
 
     public void GameStart(){

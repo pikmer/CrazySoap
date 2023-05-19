@@ -35,6 +35,7 @@ public class Sponge : HealthObstacle
         }else{
             this.scaleCount = 3;
         }
+        AudioManager.Instance.PlayDamage((float)this.HP / (float)this.MaxHP);
 
         if(this.isHPbar){
             var size = this.HPbar.localScale;

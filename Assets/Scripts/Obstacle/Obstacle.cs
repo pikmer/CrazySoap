@@ -51,6 +51,7 @@ public class Obstacle : MonoBehaviour
 
     //プレイヤーと衝突
     public virtual void Fly(Vector3 flyVec){
+        AudioManager.Instance.PlaySE(3);
         this.flyCount = this.FlyCount;
         this.flyVec = flyVec;
         if(this.flyVec.y < 0)this.flyVec.y = 0;
