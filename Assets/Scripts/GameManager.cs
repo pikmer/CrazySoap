@@ -87,6 +87,7 @@ public class GameManager : MonoBehaviour
 
     public void GameStart(){
         this.isGame = true;
+        AudioManager.Instance.PlaySE(4);
         Player.Instance.GameStart();
         UIManager.Instance.GameStart();
         ObstacleManager.Instance.GameStart();
@@ -108,6 +109,7 @@ public class GameManager : MonoBehaviour
         if(CoinParent.Instance.Use(this.continueMoney)){
             this.continueDelay = this.ContinueDelay;
             UIManager.Instance.ContinueDelaySet();
+            AudioManager.Instance.PlaySE(1);
         }
     }
 
@@ -119,12 +121,14 @@ public class GameManager : MonoBehaviour
 
     public void GameOver(){
         this.isGame = false;
+        AudioManager.Instance.PlaySE(4);
         UIManager.Instance.GameOver();
         ScoreManager.Instance.GameOver();
     }
 
     public void Retry(){
         this.isContinue = false;
+        AudioManager.Instance.PlaySE(4);
         Player.Instance.Retry();
         UIManager.Instance.Retry();
         ObstacleManager.Instance.Retry();

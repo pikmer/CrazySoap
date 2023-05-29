@@ -41,11 +41,13 @@ public class Shop : MonoBehaviour
             Player.Instance.ShieldCountSet(+1);
             this.shieldText.text = Player.Instance.shieldUseCount.ToString();
             this.coinText.text = CoinParent.Instance.money.ToString();
+            AudioManager.Instance.PlaySE(4);
         }
     }
 
     public void SetActive(bool isActive){
         this.content.SetActive(isActive);
+        AudioManager.Instance.PlaySE(4);
         this.shieldText.text = Player.Instance.shieldUseCount.ToString();
         this.coinText.text = CoinParent.Instance.money.ToString();
     }
