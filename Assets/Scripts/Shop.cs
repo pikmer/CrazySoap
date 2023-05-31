@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
 {
+    public static Shop Instance;
+
     [SerializeField] GameObject content;
     
     [SerializeField] Text coinText;
@@ -15,6 +17,9 @@ public class Shop : MonoBehaviour
     int shieldOverCount;
     int ShieldOverCount = 7;
 
+    void Awake(){
+        Instance = this;
+    }
 
     void FixedUpdate(){
         if(this.shieldOverCount > 0){
@@ -47,8 +52,13 @@ public class Shop : MonoBehaviour
 
     public void SetActive(bool isActive){
         this.content.SetActive(isActive);
+        AdsManager.Instance.BannerDisplay(!isActive);
         AudioManager.Instance.PlaySE(4);
         this.shieldText.text = Player.Instance.shieldUseCount.ToString();
+        this.coinText.text = CoinParent.Instance.money.ToString();
+    }
+
+    public void ShopCoinText(){
         this.coinText.text = CoinParent.Instance.money.ToString();
     }
 }

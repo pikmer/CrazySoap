@@ -40,6 +40,10 @@ public class ScoreManager : MonoBehaviour
     [SerializeField]
     Transform playerTrf;
 
+    //操作説明
+    [SerializeField]
+    GameObject ctrlImage;
+
     void Awake(){
         Instance = this;
 
@@ -80,6 +84,11 @@ public class ScoreManager : MonoBehaviour
         if(score != this.befourScore){
             this.befourScore = score;
             this.scoreText.text = score.ToString();
+
+            //操作説明
+            if(this.ctrlImage.activeSelf && score > 30){
+                this.ctrlImage.SetActive(false);
+            }
         }
     }
 
@@ -115,6 +124,7 @@ public class ScoreManager : MonoBehaviour
     public void GameStart(){
         this.scoreText.text = "";
         this.topScoreTextGame.text = "top " + this.GetTopScores().scores[0];
+        if(GameManager.Instance.isPC) this.ctrlImage.SetActive(true);
     }
 
     public void GameOver(){

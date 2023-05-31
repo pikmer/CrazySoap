@@ -174,6 +174,12 @@ public class CoinParent : MonoBehaviour
         }
     }
 
+    public void AdsCoinGet(int count){
+        this.money += count;
+        PlayerPrefs.SetInt(this.moneyKey, this.money);
+        this.moneyText.text = this.money.ToString();
+    }
+
     public void PositionReset(){
         var positionResetRange = Player.Instance.positionResetRange;
 		foreach (var coin in this.coins)

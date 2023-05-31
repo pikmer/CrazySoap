@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Runtime.InteropServices;
+using CrazyGames;
 
 public class GameManager : MonoBehaviour
 {
@@ -50,7 +51,7 @@ public class GameManager : MonoBehaviour
         if(this.gameOverDelay > 0){
             this.gameOverDelay--;
             if(this.gameOverDelay <= 0){
-                // CrazyEvents.Instance.GameplayStop();
+                CrazyEvents.Instance.GameplayStop();
                 if(this.isContinue){
                     this.GameOver();
                 }else{
@@ -87,11 +88,13 @@ public class GameManager : MonoBehaviour
 
     public void GameStart(){
         this.isGame = true;
+        CrazyEvents.Instance.GameplayStart();
         AudioManager.Instance.PlaySE(4);
         Player.Instance.GameStart();
         UIManager.Instance.GameStart();
         ObstacleManager.Instance.GameStart();
         ScoreManager.Instance.GameStart();
+        AdsManager.Instance.GameStart();
     }
 
     public void PlayerKilled(){
@@ -116,6 +119,7 @@ public class GameManager : MonoBehaviour
     public void Continue(){
         this.isContinue = true;
         this.isGame = true;
+        CrazyEvents.Instance.GameplayStart();
         Player.Instance.Continue();
     }
 
@@ -129,6 +133,7 @@ public class GameManager : MonoBehaviour
     public void Retry(){
         this.isContinue = false;
         AudioManager.Instance.PlaySE(4);
+
         Player.Instance.Retry();
         UIManager.Instance.Retry();
         ObstacleManager.Instance.Retry();
@@ -137,6 +142,7 @@ public class GameManager : MonoBehaviour
         CoinParent.Instance.Retry();
         Fog.Instance.Retry();
         ScoreManager.Instance.Retry();
+        AdsManager.Instance.Retry();
     }
 
     public void DataDelete(){
