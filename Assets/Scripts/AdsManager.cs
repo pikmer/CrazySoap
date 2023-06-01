@@ -9,6 +9,7 @@ public class AdsManager : MonoBehaviour
     public static AdsManager Instance;
 
     public GameObject adsButtonObj;
+    public Text adsButtonText;
     public GameObject rewardGetObj;
     public Text rewardGetText;
     int adsCoin = 200;
@@ -21,9 +22,12 @@ public class AdsManager : MonoBehaviour
     {
         Instance = this;
 
-        this.BannerDisplay(true);
+        this.rewardGetText.text = "+" + adsCoin + "GET!!";
+        this.adsButtonText.text = "+" + adsCoin;
+    }
 
-        this.rewardGetText.text = "+" + adsCoin;
+    void Start(){
+        this.BannerDisplay(true);
     }
 
     public void GameStart(){

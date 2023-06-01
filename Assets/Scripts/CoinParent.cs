@@ -178,6 +178,7 @@ public class CoinParent : MonoBehaviour
         this.money += count;
         PlayerPrefs.SetInt(this.moneyKey, this.money);
         this.moneyText.text = this.money.ToString();
+        AudioManager.Instance.PlaySE(1);
     }
 
     public void PositionReset(){
