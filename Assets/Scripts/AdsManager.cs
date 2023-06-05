@@ -22,7 +22,7 @@ public class AdsManager : MonoBehaviour
     {
         Instance = this;
 
-        this.rewardGetText.text = "+" + adsCoin + "GET!!";
+        this.rewardGetText.text = "+" + adsCoin + " GET!!";
         this.adsButtonText.text = "+" + adsCoin;
     }
 

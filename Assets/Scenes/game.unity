@@ -4796,7 +4796,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &273761557
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6238,10 +6238,9 @@ MonoBehaviour:
     m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: "(C)Pikmer\n------------------------------------\r\nThis application uses
-    the following materials.\r\n\r\n[Sound]\r\nFreesound (https://freesound.org/)\r\n
-    licensed under CCBY 3.0\r\n \"Impact - short ring out.\" by SoundsnapFX\r\n (https://freesound.org/people/SoundsnapFX)\r\n
-    \"bubble (7).wav\" by Glaneur de sons\r\n (https://freesound.org/people/Glaneur
-    de sons)\r\n\r\n[Font]\r\nfunwari-round\r\n(https://suzukimemo.com/post-1302)"
+    the following materials.\r\n\r\n[Sound]\r\nFreesound (https://freesound.org/)\r\nlicensed
+    under CCBY 3.0\r\n \"Impact - short ring out.\" by SoundsnapFX\r\n (https://freesound.org/people/SoundsnapFX)\r\n\"bubble
+    (7).wav\" by Glaneur de sons\r\n (https://freesound.org/people/Glaneur de sons)\r\n\r\n[Font]\r\nfunwari-round\r\n(https://suzukimemo.com/post-1302)"
 --- !u!222 &358791296
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -45940,7 +45939,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1910597725
 RectTransform:
   m_ObjectHideFlags: 0
